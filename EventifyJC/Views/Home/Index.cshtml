@@ -1,0 +1,269 @@
+﻿@* /Views/Home/Index.cshtml *@
+
+@model HomeViewModel
+
+
+@{
+    ViewData["Title"] = "Eventify JC · Organiza tu evento en un solo lugar";
+    ViewData["Description"] = "Marketplace colombiano que conecta organizadores con proveedores verificados para eventos sociales, empresariales y familiares.";
+    ViewData["OgTitle"] = "Eventify JC · Marketplace de eventos en Colombia";
+    ViewData["OgDescription"] = "Compara proveedores, solicita múltiples cotizaciones y gestiona todo tu evento desde un solo lugar.";
+}
+
+<!-- HERO -->
+<section class="relative overflow-hidden hero-radial text-primary-foreground">
+    <div class="mx-auto grid max-w-7xl gap-12 px-6 pt-20 pb-28 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:pt-28">
+        <div>
+            <span class="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm font-medium text-white hover:bg-white/15 transition">
+                <svg class="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+                +500 proveedores verificados en Colombia
+            </span>
+            <h1 class="mt-5 font-display text-4xl font-extrabold leading-[1.05] sm:text-5xl lg:text-6xl">
+                Organiza tu evento <span class="text-accent">en un solo lugar</span>
+            </h1>
+            <p class="mt-5 max-w-xl text-base text-white/80 sm:text-lg">
+                Encuentra catering, decoración, fotografía, salones y más. Solicita cotizaciones, compara
+                y contrata sin moverte de la silla.
+            </p>
+
+            <!-- Search bar -->
+            <form action="/marketplace" method="get" class="mt-8 rounded-2xl bg-white p-2 shadow-2xl shadow-black/20">
+                <div class="grid items-center gap-2 sm:grid-cols-[1.4fr_1fr_1fr_auto]">
+                    <div class="flex items-center gap-2 rounded-xl px-3 py-2">
+                        <svg class="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" name="q" placeholder="¿Qué servicio buscas?"
+                               class="w-full border-0 bg-transparent text-foreground shadow-none focus:outline-none focus:ring-0" />
+                    </div>
+                    <div class="flex items-center gap-2 border-t px-3 py-2 sm:border-l sm:border-t-0">
+                        <svg class="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <input type="text" name="city" placeholder="Ciudad"
+                               class="w-full border-0 bg-transparent text-foreground shadow-none focus:outline-none focus:ring-0" />
+                    </div>
+                    <div class="flex items-center gap-2 border-t px-3 py-2 sm:border-l sm:border-t-0">
+                        <svg class="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <input type="date" name="date"
+                               class="w-full border-0 bg-transparent text-foreground shadow-none focus:outline-none focus:ring-0" />
+                    </div>
+                    <button type="submit" class="h-12 bg-accent text-accent-foreground hover:bg-accent/90 sm:rounded-xl px-6 font-medium transition-colors">
+                        Buscar
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6 flex flex-wrap gap-3">
+                <a href="/marketplace" class="inline-flex items-center rounded-lg bg-accent px-6 py-3 text-sm font-medium text-accent-foreground hover:bg-accent/90 transition-colors">
+                    Solicitar cotización
+                </a>
+                <a href="/marketplace" class="inline-flex items-center rounded-lg border border-white/30 bg-white/5 px-6 py-3 text-sm font-medium text-white hover:bg-white/10 transition-colors">
+                    Explorar servicios
+                    <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+
+            <div class="mt-10 grid max-w-md grid-cols-3 gap-6 text-white">
+                <div>
+                    <div class="font-display text-2xl font-extrabold">500+</div>
+                    <div class="text-xs text-white/70">Proveedores</div>
+                </div>
+                <div>
+                    <div class="font-display text-2xl font-extrabold">12k+</div>
+                    <div class="text-xs text-white/70">Eventos</div>
+                </div>
+                <div>
+                    <div class="font-display text-2xl font-extrabold">4.8★</div>
+                    <div class="text-xs text-white/70">Calificación</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero visual -->
+        <div class="relative hidden lg:block">
+            <div class="absolute -top-6 -left-6 h-72 w-72 rounded-full bg-accent/30 blur-3xl"></div>
+            <div class="relative grid grid-cols-2 gap-4">
+                <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=600&q=70"
+                     alt="Evento" class="aspect-[3/4] w-full rounded-3xl object-cover shadow-2xl" />
+                <div class="mt-12 space-y-4">
+                    <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=600&q=70"
+                         alt="Boda" class="aspect-square w-full rounded-3xl object-cover shadow-2xl" />
+                    <div class="rounded-3xl bg-white p-4 text-foreground shadow-2xl">
+                        <div class="flex items-center gap-3">
+                            <div class="grid h-10 w-10 place-items-center rounded-xl bg-accent/15 text-accent">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-primary">Proveedor verificado</div>
+                                <div class="text-xs text-muted-foreground">RUT, reseñas y portafolio validado</div>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex items-center gap-1 text-xs">
+                            @for (int i = 0; i < 5; i++)
+                            {
+                                <svg class="h-3.5 w-3.5 fill-accent text-accent" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                            }
+                            <span class="ml-2 text-muted-foreground">4.9 · 184 reseñas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="mx-auto max-w-7xl px-6 py-20">
+    <div class="flex items-end justify-between">
+        <div>
+            <h2 class="font-display text-3xl font-extrabold text-primary sm:text-4xl">
+                Categorías destacadas
+            </h2>
+            <p class="mt-2 text-muted-foreground">Explora todo lo que necesitas para tu evento.</p>
+        </div>
+        <a href="/marketplace" class="hidden text-primary sm:inline-flex items-center gap-1 hover:underline">
+            Ver todo
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+    </div>
+
+    <div class="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        @if (Model.Categories != null && Model.Categories.Any())
+        {
+            @foreach (var category in Model.Categories)
+            {
+                <a href="/marketplace?category=@category.Slug"
+                   class="group rounded-2xl border border-border bg-card p-5 transition card-soft hover:-translate-y-1 hover:border-accent/40">
+                    <div class="grid h-12 w-12 place-items-center rounded-xl @category.ColorClass text-primary">
+                        <i class="@category.IconClass h-6 w-6"></i>
+                    </div>
+                    <div class="mt-4 font-display text-lg font-bold text-primary">@category.Name</div>
+                    <div class="mt-1 text-xs text-muted-foreground">@category.Count proveedores</div>
+                </a>
+            }
+        }
+        else
+        {
+            <p class="text-muted-foreground">No hay categorías disponibles.</p>
+        }
+    </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="bg-secondary/50 py-20">
+    <div class="mx-auto max-w-7xl px-6">
+        <div class="text-center">
+            <h2 class="font-display text-3xl font-extrabold text-primary sm:text-4xl">
+                Todo lo que necesitas, en un solo lugar
+            </h2>
+            <p class="mt-3 text-muted-foreground">Diseñado para organizadores y proveedores en Colombia.</p>
+        </div>
+        <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div class="rounded-lg border-border/60 p-6 shadow-sm hover:shadow-md transition bg-card">
+                <div class="grid h-12 w-12 place-items-center rounded-xl bg-accent/10 text-accent">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                </div>
+                <h3 class="mt-5 font-display text-lg font-bold text-primary">Compara proveedores</h3>
+                <p class="mt-2 text-sm text-muted-foreground">Mira precios, reseñas y portafolio lado a lado.</p>
+            </div>
+            <div class="rounded-lg border-border/60 p-6 shadow-sm hover:shadow-md transition bg-card">
+                <div class="grid h-12 w-12 place-items-center rounded-xl bg-accent/10 text-accent">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                </div>
+                <h3 class="mt-5 font-display text-lg font-bold text-primary">Múltiples cotizaciones</h3>
+                <p class="mt-2 text-sm text-muted-foreground">Envía una solicitud y recibe varias propuestas.</p>
+            </div>
+            <div class="rounded-lg border-border/60 p-6 shadow-sm hover:shadow-md transition bg-card">
+                <div class="grid h-12 w-12 place-items-center rounded-xl bg-accent/10 text-accent">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <h3 class="mt-5 font-display text-lg font-bold text-primary">Proveedores verificados</h3>
+                <p class="mt-2 text-sm text-muted-foreground">RUT, identidad y reputación validados.</p>
+            </div>
+            <div class="rounded-lg border-border/60 p-6 shadow-sm hover:shadow-md transition bg-card">
+                <div class="grid h-12 w-12 place-items-center rounded-xl bg-accent/10 text-accent">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                    </svg>
+                </div>
+                <h3 class="mt-5 font-display text-lg font-bold text-primary">Gestión centralizada</h3>
+                <p class="mt-2 text-sm text-muted-foreground">Tus eventos, mensajes y pagos en un panel.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURED PROVIDERS -->
+<section class="mx-auto max-w-7xl px-6 py-20">
+    <div class="flex items-end justify-between">
+        <div>
+            <h2 class="font-display text-3xl font-extrabold text-primary sm:text-4xl">
+                Proveedores destacados
+            </h2>
+            <p class="mt-2 text-muted-foreground">Los mejor calificados esta semana.</p>
+        </div>
+        <a href="/marketplace" class="inline-flex items-center gap-1 text-primary hover:underline">
+            Ver marketplace
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+    </div>
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        @if (Model.Providers != null && Model.Providers.Any())
+        {
+            @foreach (var provider in Model.Providers.Take(4))
+            {
+                @await Html.PartialAsync("_ProviderCard", provider)
+            }
+        }
+        else
+        {
+            <p class="text-muted-foreground">No hay proveedores disponibles.</p>
+        }
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="mx-auto max-w-7xl px-6 pb-20">
+    <div class="overflow-hidden rounded-3xl brand-gradient p-10 text-primary-foreground lg:p-16">
+        <div class="grid items-center gap-8 lg:grid-cols-[1.4fr_1fr]">
+            <div>
+                <h2 class="font-display text-3xl font-extrabold sm:text-4xl">
+                    ¿Eres proveedor de servicios para eventos?
+                </h2>
+                <p class="mt-3 max-w-xl text-white/80">
+                    Únete a Eventify JC, recibe solicitudes de cotización y haz crecer tu negocio en toda Colombia.
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-3 lg:justify-end">
+                <a href="/register-provider" class="inline-flex items-center rounded-lg bg-accent px-6 py-3 text-sm font-medium text-accent-foreground hover:bg-accent/90 transition-colors">
+                    Crear perfil empresarial
+                </a>
+                <a href="/auth" class="inline-flex items-center rounded-lg border border-white/30 bg-white/5 px-6 py-3 text-sm font-medium text-white hover:bg-white/10 transition-colors">
+                    Conocer más
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

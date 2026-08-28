@@ -1,0 +1,104 @@
+﻿@* /Views/Shared/_SiteHeader.cshtml *@
+
+@{
+    var ocultarNavPublica = ViewData["OcultarNavPublica"] as bool? ?? false;
+    var esProveedor = User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("proveedor");
+}
+
+<header class="border-b border-border bg-background/95 backdrop-blur-sm sticky top-0 z-50">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 h-16">
+        <a href="/" class="flex items-center gap-2 font-display text-xl font-extrabold text-primary">
+            <span class="text-accent">Eventify</span> JC
+        </a>
+
+        <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+            @if (esProveedor)
+            {
+                <a asp-controller="Proveedor" asp-action="Index" class="text-muted-foreground hover:text-primary transition">Listado de negocios</a>
+                <a asp-controller="Proveedor" asp-action="Create" class="text-muted-foreground hover:text-primary transition">Crear negocio</a>
+                <a asp-controller="Proveedor" asp-action="Servicios" class="text-muted-foreground hover:text-primary transition">Servicios</a>
+                <a asp-controller="Proveedor" asp-action="Reservas" class="text-muted-foreground hover:text-primary transition">Reservas</a>
+                <a asp-controller="Proveedor" asp-action="Solicitudes" class="text-muted-foreground hover:text-primary transition">Solicitudes</a>
+                <a asp-controller="Proveedor" asp-action="Pagos" class="text-muted-foreground hover:text-primary transition">Pagos</a>
+            }
+            @if (!ocultarNavPublica)
+            {
+                <a href="/marketplace" class="text-muted-foreground hover:text-primary transition">Marketplace</a>
+                <a href="/proveedores" class="text-muted-foreground hover:text-primary transition">Proveedores</a>
+                <a href="/blog" class="text-muted-foreground hover:text-primary transition">Blog</a>
+                <a href="/como-funciona" class="text-muted-foreground hover:text-primary transition">¿Cómo funciona?</a>
+            }
+        </nav>
+
+        <div class="flex items-center gap-3">
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var nombre = User.Identity.Name ?? "Mi cuenta";
+
+                <div class="relative" id="userMenuWrapper">
+                    <button id="userMenuBtn" type="button"
+                            class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-primary hover:bg-secondary transition">
+                        <span class="grid h-8 w-8 place-items-center rounded-full bg-accent/15 text-accent text-xs font-bold">
+                            @(nombre.Length > 0 ? nombre.Substring(0, 1).ToUpper() : "U")
+                        </span>
+                        <span class="hidden sm:inline">@nombre</span>
+                        <svg class="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div id="userMenuDropdown"
+                         class="hidden absolute right-0 mt-2 w-56 rounded-xl border border-border bg-card shadow-lg card-soft overflow-hidden">
+                        <div class="py-1">
+                            <a asp-controller="Account" asp-action="Perfil" class="block px-4 py-2 text-sm text-foreground hover:bg-secondary transition">Perfil</a>
+                            <a asp-controller="Account" asp-action="Cuenta" class="block px-4 py-2 text-sm text-foreground hover:bg-secondary transition">Cuenta</a>
+                        </div>
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="border-t border-border">
+                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
+                                Cerrar sesión
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="hidden sm:inline-flex text-sm font-medium text-muted-foreground hover:text-primary transition">
+                    Iniciar sesión
+                </a>
+                <a asp-controller="Account" asp-action="Register" class="inline-flex items-center rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:bg-accent/90 transition">
+                    Registrarme
+                </a>
+            }
+
+            <button class="md:hidden p-2 rounded-lg hover:bg-secondary transition" aria-label="Menú">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</header>
+
+<script>
+    (function () {
+        function setupDropdown(btnId, dropdownId) {
+            const btn = document.getElementById(btnId);
+            const dropdown = document.getElementById(dropdownId);
+            if (!btn || !dropdown) return;
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!dropdown.contains(e.target) && e.target !== btn) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        setupDropdown('userMenuBtn', 'userMenuDropdown');
+    })();
+</script>

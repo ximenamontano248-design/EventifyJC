@@ -1,0 +1,22 @@
+@model EventifyJC.Models.ProviderDto
+
+<a href="/marketplace?category=@Model.Category" class="group overflow-hidden rounded-2xl border border-border bg-card card-soft transition hover:-translate-y-1">
+    <div class="relative h-40 w-full overflow-hidden">
+        <img src="@Model.Image" alt="@Model.Name" class="h-full w-full object-cover transition group-hover:scale-105" />
+        <span class="absolute left-3 top-3 rounded-full bg-white/90 px-2 py-1 text-[10px] font-semibold text-primary">@Model.Category</span>
+        @if (Model.Verified)
+        {
+            <span class="absolute right-3 top-3 rounded-full bg-accent px-2 py-1 text-[10px] font-semibold text-accent-foreground">Verificado</span>
+        }
+    </div>
+    <div class="p-4">
+        <div class="font-display text-base font-bold text-primary">@Model.Name</div>
+        <div class="mt-1 text-xs text-muted-foreground">@Model.City</div>
+        <div class="mt-2 flex items-center gap-1 text-xs">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 fill-accent text-accent" viewBox="0 0 24 24"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01z"/></svg>
+            <span class="font-semibold text-primary">@Model.Rating.ToString("0.0")</span>
+            <span class="text-muted-foreground">· @Model.Reviews reseñas</span>
+        </div>
+        <div class="mt-2 text-sm font-semibold text-accent">@Model.Price</div>
+    </div>
+</a>

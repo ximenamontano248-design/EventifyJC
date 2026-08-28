@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Proveedor>
+
+@{
+    ViewData["Title"] = "Mis negocios · Eventify JC";
+}
+
+
+<div class="min-h-screen bg-background">
+    <section class="mx-auto max-w-4xl px-6 py-12">
+        <div class="flex items-center justify-between">
+            <h1 class="font-display text-2xl font-bold text-primary">Mis negocios</h1>
+            <a asp-controller="Proveedor" asp-action="Create" class="inline-flex items-center rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:bg-accent/90">
+                + Agregar negocio
+            </a>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="mt-4 rounded-lg bg-green-50 p-3 text-sm text-green-700">@TempData["Success"]</div>
+        }
+
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            @if (!Model.Any())
+            {
+                <p class="text-muted-foreground">Aún no has registrado ningún negocio.</p>
+            }
+            @foreach (var negocio in Model)
+            {
+                <div class="rounded-xl border border-border bg-card p-4 card-soft">
+                    <div class="font-display font-bold text-primary">@negocio.NombreComercial</div>
+                    <div class="text-xs text-muted-foreground">@negocio.Ciudad · NIT @negocio.Nit</div>
+                    @if (negocio.Verificado == true)
+                    {
+                        <span class="mt-2 inline-block rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-semibold text-accent">Verificado</span>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+</div>

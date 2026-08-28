@@ -1,0 +1,29 @@
+@model EventifyJC.Models.ServiceDto
+
+<a href="/marketplace/servicio/@Model.Id" class="group overflow-hidden rounded-2xl border border-border bg-card card-soft transition hover:-translate-y-1">
+    <div class="relative h-40 w-full overflow-hidden bg-secondary">
+        @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+        {
+            <img src="@Model.ImagenUrl" alt="@Model.Nombre" class="h-full w-full object-cover transition group-hover:scale-105" />
+        }
+        @if (Model.Verificado)
+        {
+            <span class="absolute right-3 top-3 rounded-full bg-accent px-2 py-1 text-[10px] font-semibold text-accent-foreground">Verificado</span>
+        }
+    </div>
+    <div class="p-4">
+        <div class="font-display text-base font-bold text-primary">@Model.Nombre</div>
+        <div class="mt-1 text-xs text-muted-foreground">@Model.ProveedorNombre · @Model.Ciudad</div>
+        @if (!string.IsNullOrEmpty(Model.Descripcion))
+        {
+            <p class="mt-2 line-clamp-2 text-xs text-muted-foreground">@Model.Descripcion</p>
+        }
+        <div class="mt-2 flex items-center gap-1 text-xs">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 fill-accent text-accent" viewBox="0 0 24 24"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01z"/></svg>
+            <span class="font-semibold text-primary">@Model.CalificacionPromedio.ToString("0.0")</span>
+        </div>
+        <div class="mt-2 text-sm font-semibold text-accent">
+            Desde @Model.PrecioBase.ToString("C0")
+        </div>
+    </div>
+</a>
