@@ -70,7 +70,7 @@ namespace EventifyJC.Migrations
 
                     b.HasIndex("UsuarioAccion");
 
-                    b.ToTable("Auditoria", (string)null);
+                    b.ToTable("Auditoria");
                 });
 
             modelBuilder.Entity("EventifyJC.Models.Calificacion", b =>
@@ -148,7 +148,7 @@ namespace EventifyJC.Migrations
                     b.HasIndex(new[] { "Nombre" }, "UQ__Categori__72AFBCC6561E5108")
                         .IsUnique();
 
-                    b.ToTable("Categoria", (string)null);
+                    b.ToTable("Categoria");
                 });
 
             modelBuilder.Entity("EventifyJC.Models.Cotizacion", b =>

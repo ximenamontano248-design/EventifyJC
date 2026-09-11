@@ -1,0 +1,95 @@
+﻿@model EventifyJC.Models.Proveedor
+
+@{
+    ViewData["Title"] = "Mi Empresa";
+}
+
+<div class="max-w-4xl mx-auto py-10 px-4">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Mi Empresa</h1>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <form asp-action="EditarPerfilEmpresa" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-red-500 mb-4"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Comercial</label>
+                    <input asp-for="NombreComercial" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Razón Social</label>
+                    <input asp-for="RazonSocial" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">NIT</label>
+                    <input asp-for="Nit" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Representante</label>
+                    <input asp-for="Representante" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+                </div>
+
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                    <textarea asp-for="Descripcion" rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-2"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
+                    <input asp-for="Direccion" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
+                    <input asp-for="Ciudad" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono Negocio</label>
+                    <input asp-for="TelefonoNegocio" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nivel de Cobertura</label>
+                    <select asp-for="NivelCobertura" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                        <option value="municipal">Municipal</option>
+                        <option value="departamental">Departamental</option>
+                        <option value="nacional">Nacional</option>
+                    </select>
+                </div>
+
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Categorías</label>
+                    <input asp-for="Categorias" class="w-full border border-gray-300 rounded-lg px-4 py-2" placeholder="Ej: Decoración, Catering, Música" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">WhatsApp</label>
+                    <input asp-for="Whatsapp" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Instagram</label>
+                    <input asp-for="Instagram" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Facebook</label>
+                    <input asp-for="Facebook" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sitio Web</label>
+                    <input asp-for="SitioWeb" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-end">
+                <button type="submit" class="px-6 py-2.5 bg-accent text-white rounded-lg hover:bg-accent/90 transition">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</div>

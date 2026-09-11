@@ -1,7 +1,9 @@
 ﻿using EventifyJC.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace EventifyJC.Controllers;
 
@@ -131,4 +133,78 @@ public class AccountController : Controller
         "proveedor" => "Proveedor",
         _ => "Home",
     };
+
+    [Authorize]
+    public IActionResult Perfil()
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!int.TryParse(userIdClaim, out int idUsuario))
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        var usuario = _context.Usuarios.Find(idUsuario);
+        return View(usuario);
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> ActualizarPerfil(Usuario model)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!int.TryParse(userIdClaim, out int idUsuario))
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        var usuario = _context.Usuarios.Find(idUsuario);
+
+        usuario.Nombre = model.Nombre;
+        usuario.Telefono = model.Telefono;
+
+        await _context.SaveChangesAsync();
+        TempData["Success"] = "Perfil actualizado correctamente";
+        return RedirectToAction("Perfil");
+    }
+
+    [Authorize]
+    public IActionResult CambiarContrasena()
+    {
+        return View();
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> CambiarContrasena(ChangePasswordViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!int.TryParse(userIdClaim, out int idUsuario))
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        var usuario = _context.Usuarios.Find(idUsuario);
+
+        // Verificar contraseña actual con el hash
+        var passwordHasher = new PasswordHasher<Usuario>();
+        var result = passwordHasher.VerifyHashedPassword(usuario, usuario.PasswordHash, model.PasswordActual);
+
+        if (result == PasswordVerificationResult.Failed)
+        {
+            ModelState.AddModelError(string.Empty, "La contraseña actual es incorrecta.");
+            return View(model);
+        }
+
+        // Actualizar contraseña
+        usuario.PasswordHash = passwordHasher.HashPassword(usuario, model.NuevaPassword);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Contraseña actualizada correctamente";
+        return RedirectToAction("Perfil");
+    }
 }

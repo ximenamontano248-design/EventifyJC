@@ -1,0 +1,40 @@
+﻿@model EventifyJC.Models.ChangePasswordViewModel
+
+@{
+    ViewData["Title"] = "Cambiar Contraseña";
+}
+
+<div class="max-w-md mx-auto py-10 px-4">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Cambiar Contraseña</h1>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <form asp-action="CambiarContrasena" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-red-500 mb-4"></div>
+
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña Actual</label>
+                    <input asp-for="PasswordActual" type="password" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-accent focus:border-accent" />
+                    <span asp-validation-for="PasswordActual" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nueva Contraseña</label>
+                    <input asp-for="NuevaPassword" type="password" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-accent focus:border-accent" />
+                    <span asp-validation-for="NuevaPassword" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Nueva Contraseña</label>
+                    <input asp-for="ConfirmarPassword" type="password" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-accent focus:border-accent" />
+                    <span asp-validation-for="ConfirmarPassword" class="text-red-500 text-xs"></span>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-end space-x-3">
+                <a href="/" class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">Cancelar</a>
+                <button type="submit" class="px-6 py-2.5 bg-accent text-white rounded-lg hover:bg-accent/90 transition">Actualizar Contraseña</button>
+            </div>
+        </form>
+    </div>
+</div>

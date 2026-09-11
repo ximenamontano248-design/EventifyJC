@@ -1,31 +1,106 @@
+/* Estilos base */
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+/* Reset y estilos globales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  margin-bottom: 60px;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* Ocultar scrollbar para mejor estética */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+/* Ajustes para los links */
+a {
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+    a:hover {
+        opacity: 0.9;
+    }
+
+/* Botones */
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+    button:focus {
+        outline: none;
+    }
+
+/* Inputs */
+input, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+/* Clase helper para mejor legibilidad del contenido */
+.content-wrapper {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+    .content-wrapper {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .content-wrapper {
+        padding: 0 2rem;
+    }
+}
+
+/* Asegurarse de que los elementos de Tailwind no se rompan */
+.bg-slate-50 {
+    background-color: #f8fafc;
+}
+
+.text-slate-800 {
+    color: #1e293b;
+}
+
+/* Fix para el header sticky */
+.sticky {
+    position: -webkit-sticky;
+    position: sticky;
 }

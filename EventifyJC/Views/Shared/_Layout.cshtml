@@ -1,34 +1,272 @@
-﻿@* /Views/Shared/_Layout.cshtml *@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Eventify JC</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Montserrat:wght@600..900&display=swap" rel="stylesheet">
-
-    <!-- Tailwind CSS v4 CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Tu CSS personalizado -->
-    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
-    @await RenderSectionAsync("Head", required: false)
+    <style>
+        body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+        }
+
+        .card-soft {
+        box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+        }
+
+        .brand-gradient {
+        background: linear-gradient(135deg, #1b2340 0%, #2a1f4a 50%, #1b2340 100%);
+        }
+
+        .hero-radial {
+        background: radial-gradient(circle at 20% 40%, #2a1f4a 0%, #0f0a1a 100%);
+        }
+
+        .text-accent {
+        color: #e8823c;
+        }
+
+        .bg-accent {
+        background-color: #e8823c;
+        }
+
+        .border-accent {
+        border-color: #e8823c;
+        }
+
+        .hover\:bg-accent\/90:hover {
+        background-color: rgba(232, 130, 60, 0.9);
+        }
+
+        .focus\:border-accent:focus {
+        border-color: #e8823c;
+        }
+
+        .focus\:ring-accent:focus {
+        --tw-ring-color: #e8823c;
+        }
+
+        .bg-primary {
+        background-color: #1b2340;
+        }
+
+        .text-primary {
+        color: #1b2340;
+        }
+
+        .border-primary {
+        border-color: #1b2340;
+        }
+
+        .bg-card {
+        background-color: #ffffff;
+        }
+
+        .border-border {
+        border-color: #e6e5e0;
+        }
+
+        .text-muted-foreground {
+        color: #6b7080;
+        }
+
+        .text-primary-foreground {
+        color: #ffffff;
+        }
+
+        .bg-white\/10 {
+        background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .hover\:bg-white\/15:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Ajustes específicos */
+        .nav-link {
+        transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+        color: #1e293b;
+        background-color: #f1f5f9;
+        }
+
+        @@media (max-width: 767px) {
+        .nav-container {
+        display: none;
+        }
+        }
+    </style>
 </head>
-<body>
-    @await Html.PartialAsync("_SiteHeader")
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-    <main>
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-3">
+                <div class="bg-primary text-accent p-2 rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-sparkles text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold text-slate-900 block leading-tight">Eventify</span>
+                    <span class="text-[10px] text-accent font-bold tracking-widest uppercase block">JC · COLOMBIA</span>
+                </div>
+            </a>
+
+            <nav class="hidden md:flex space-x-2 text-sm font-medium items-center">
+                <a href="/" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Inicio</a>
+                <a href="/marketplace" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Servicios</a>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    @if (User.IsInRole("proveedor"))
+                    {
+                        <a href="/Proveedor" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Mi Negocio</a>
+                    }
+                    @if (User.IsInRole("admin"))
+                    {
+                        <a href="/Admin" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Admin</a>
+                    }
+                  
+                }
+                else
+                {
+                    <a href="/Account/Register" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Ser Proveedor</a>
+                }
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <!-- Menú desplegable de usuario -->
+                    <div class="relative">
+                        <button id="userMenuBtn" class="flex items-center space-x-2 text-sm font-medium text-slate-700 hover:text-slate-900 transition px-3 py-2 rounded-full hover:bg-slate-100">
+                            <i class="fa-solid fa-user-circle text-lg"></i>
+                            <span>@User.Identity.Name</span>
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </button>
+
+                        <!-- Dropdown -->
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
+                            @if (User.IsInRole("proveedor"))
+                            {
+                                <a href="/Proveedor/PerfilEmpresa" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                    <i class="fa-solid fa-building mr-2"></i>Mi Empresa
+                                </a>
+                                <a href="/Proveedor" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                    <i class="fa-solid fa-briefcase mr-2"></i>Mis Servicios
+                                </a>
+                                <div class="border-t border-gray-100 my-1"></div>
+                            }
+
+                            @if (User.IsInRole("organizador"))
+                            {
+                                <a href="/Organizador" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                    <i class="fa-solid fa-calendar-check mr-2"></i>Mis Eventos
+                                </a>
+                                <div class="border-t border-gray-100 my-1"></div>
+                            }
+
+                            <a href="/Account/Perfil" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                <i class="fa-solid fa-user mr-2"></i>Mi Perfil
+                            </a>
+                            <a href="/Account/CambiarContrasena" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                <i class="fa-solid fa-key mr-2"></i>Cambiar Contraseña
+                            </a>
+
+                            <div class="border-t border-gray-100 my-1"></div>
+
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="block">
+                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
+                                    <i class="fa-solid fa-sign-out-alt mr-2"></i>Cerrar sesión
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a href="/Account/Login" class="text-sm font-medium text-slate-700 hover:text-primary px-3 py-2 transition">Iniciar sesión</a>
+                    <a href="/Account/Register" class="text-sm font-semibold bg-accent text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition">Crear cuenta</a>
+                }
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-grow">
         @RenderBody()
     </main>
 
-    @await Html.PartialAsync("_SiteFooter")
+    <!-- FOOTER -->
+    <footer class="bg-primary text-slate-400 py-12 border-t border-white/10 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
+            <div>
+                <span class="text-white font-bold text-lg">Eventify JC</span>
+                <p class="mt-2 text-xs leading-relaxed text-slate-400">La plataforma colombiana que conecta organizadores y proveedores de eventos.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-3">Explora</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="/marketplace" class="hover:text-white">Catering</a></li>
+                    <li><a href="/marketplace" class="hover:text-white">Decoración</a></li>
+                    <li><a href="/marketplace" class="hover:text-white">Salones</a></li>
+                    <li><a href="/marketplace" class="hover:text-white">Fotografía</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-3">Compañía</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#" class="hover:text-white">Sobre nosotros</a></li>
+                    <li><a href="#" class="hover:text-white">Cómo funciona</a></li>
+                    <li><a href="#" class="hover:text-white">Proveedores verificados</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-3">Soporte</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#" class="hover:text-white">Ayuda</a></li>
+                    <li><a href="#" class="hover:text-white">Términos</a></li>
+                    <li><a href="#" class="hover:text-white">Privacidad</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-white/10 text-xs text-center text-slate-500">
+            © 2026 Eventify JC · Proyecto académico
+        </div>
+    </footer>
 
-    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        document.getElementById('userMenuBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('userDropdown').classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', function(e) {
+        if (!document.getElementById('userMenuBtn').contains(e.target) &&
+        !document.getElementById('userDropdown').contains(e.target)) {
+        document.getElementById('userDropdown').classList.add('hidden');
+        }
+        });
+    </script>
 </body>
 </html>

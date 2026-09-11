@@ -1,0 +1,41 @@
+﻿@model EventifyJC.Models.Categorium
+
+@{
+    ViewData["Title"] = "Editar Categoría";
+}
+
+<div class="max-w-lg mx-auto px-4 py-10">
+    <h1 class="text-2xl font-bold text-primary mb-6">Editar Categoría</h1>
+
+    <div class="bg-white rounded-2xl border border-border p-6 card-soft">
+        <form asp-action="EditarCategoria" method="post">
+            <input type="hidden" asp-for="IdCategoria" />
+            <div asp-validation-summary="ModelOnly" class="text-red-500 mb-4"></div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                    <input asp-for="Nombre" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+                    <span asp-validation-for="Nombre" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                    <textarea asp-for="Descripcion" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2"></textarea>
+                    <span asp-validation-for="Descripcion" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Link (opcional)</label>
+                    <input asp-for="Link" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+                    <span asp-validation-for="Link" class="text-red-500 text-xs"></span>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end space-x-3">
+                <a href="/Admin" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancelar</a>
+                <button type="submit" class="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
