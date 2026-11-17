@@ -1,0 +1,88 @@
+﻿@model EventifyJC.Models.SolicitudCotizacion
+@{
+    ViewData["Title"] = "Responder solicitud";
+}
+
+<div class="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+
+    <a href="/Proveedor/Oportunidades" class="inline-flex items-center text-sm text-accent hover:underline mb-4">
+        <i class="fa-solid fa-arrow-left mr-2"></i> Volver a oportunidades
+    </a>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800 border border-red-200">
+            <i class="fa-solid fa-exclamation-circle mr-1"></i> @TempData["Error"]
+        </div>
+    }
+
+    <div class="rounded-2xl border border-border bg-card p-8 card-soft">
+        <h1 class="font-display text-2xl font-bold text-primary mb-1">Responder solicitud</h1>
+        <p class="text-sm text-muted-foreground mb-6">
+            Revisa los datos y decide si aceptas o rechazas esta solicitud.
+        </p>
+
+        <!-- Datos de la solicitud -->
+        <div class="rounded-xl bg-secondary/20 p-5 mb-6">
+            <p class="text-xs uppercase tracking-wider text-muted-foreground">Solicitud #@Model.IdSolicitud</p>
+            <p class="font-semibold text-primary mt-1">@Model.IdOrganizadorNavigation?.Nombre</p>
+            <p class="text-sm text-muted-foreground mt-1">
+                <i class="fa-solid fa-calendar mr-1"></i>
+                Evento: @Model.FechaEvento.ToString("dd/MM/yyyy")
+            </p>
+            <p class="text-sm text-muted-foreground mt-3">@Model.DescripcionEvento</p>
+        </div>
+
+        <!-- Servicio ya elegido por el organizador -->
+        <div class="rounded-xl border border-accent/30 bg-accent/5 p-5 mb-6">
+            <p class="text-xs uppercase tracking-wider text-muted-foreground mb-2">Servicio solicitado</p>
+            <p class="font-bold text-primary text-lg">
+                @(Model.IdServicioNavigation?.Nombre ?? "Sin servicio especificado")
+            </p>
+            @if (Model.IdServicioNavigation?.IdCategoriaNavigation != null)
+            {
+                <p class="text-sm text-muted-foreground">
+                    Categoría: @Model.IdServicioNavigation.IdCategoriaNavigation.Nombre
+                </p>
+            }
+            @if (Model.IdServicioNavigation != null)
+            {
+                <p class="text-sm text-accent font-semibold mt-2">
+                    Precio base: $ @Model.IdServicioNavigation.PrecioBase.ToString("N0")
+                </p>
+            }
+        </div>
+
+        <!-- Presupuesto -->
+        @if (Model.PresupuestoEstimado.HasValue && Model.PresupuestoEstimado > 0)
+        {
+            <div class="rounded-xl bg-secondary/20 p-5 mb-6">
+                <p class="text-xs uppercase tracking-wider text-muted-foreground">Presupuesto ofrecido por el organizador</p>
+                <p class="text-3xl font-bold text-accent mt-1">
+                    $ @Model.PresupuestoEstimado.Value.ToString("N0")
+                </p>
+            </div>
+        }
+
+        <!-- Botones -->
+        <div class="flex flex-wrap gap-3">
+            <form asp-controller="Proveedor" asp-action="AceptarSolicitud" method="post" class="flex-1">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="idSolicitud" value="@Model.IdSolicitud" />
+                <button type="submit"
+                        class="w-full rounded-xl bg-green-600 px-4 py-3 text-sm font-semibold text-white hover:bg-green-700 transition">
+                    <i class="fa-solid fa-check mr-2"></i> Aceptar solicitud
+                </button>
+            </form>
+
+            <form asp-controller="Proveedor" asp-action="RechazarSolicitud" method="post" class="flex-1">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="idSolicitud" value="@Model.IdSolicitud" />
+                <button type="submit"
+                        class="w-full rounded-xl border border-red-200 bg-white px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition">
+                    <i class="fa-solid fa-times mr-2"></i> Rechazar solicitud
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

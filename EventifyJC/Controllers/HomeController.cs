@@ -21,6 +21,9 @@ public class HomeController : Controller
                 IdCategoria = c.IdCategoria,
                 Slug = c.Nombre.ToLower().Replace(" ", "-"),
                 Name = c.Nombre,
+                Nombre = c.Nombre,
+                Descripcion = c.Descripcion,
+                Link = c.Link,
                 Count = c.Servicios.Count(),
             })
             .ToListAsync();
@@ -36,7 +39,7 @@ public class HomeController : Controller
                 Category = p.Servicios.Select(s => s.IdCategoriaNavigation.Nombre).FirstOrDefault() ?? "General",
                 City = p.Ciudad,
                 Rating = (double)(p.CalificacionPromedio ?? 0),
-                Reviews = 0, // TODO: calcular vía Calificacion -> Reserva -> Cotizacion -> Servicio -> Proveedor si quieres el número real
+                Reviews = 0,
                 Price = "Consultar",
                 Verified = p.Verificado ?? false,
             })
@@ -51,13 +54,8 @@ public class HomeController : Controller
         return View(vm);
     }
 
-    public async Task<IActionResult> Marketplace()
+    public async Task<IActionResult> Marketplace(string? q, int? category, string? city, bool verified = false)
     {
-        var q = Request.Query["q"].ToString();
-        var categoryFilter = Request.Query["category"].ToString();
-        var cityFilter = Request.Query["city"].ToString();
-        var verifiedOnly = Request.Query["verified"].ToString() == "true";
-
         var query = _context.Servicios
             .Include(s => s.IdCategoriaNavigation)
             .Include(s => s.IdProveedorNavigation)
@@ -71,17 +69,17 @@ public class HomeController : Controller
                 (s.IdProveedorNavigation != null && s.IdProveedorNavigation.IdUsuarioNavigation.Nombre.Contains(q)));
         }
 
-        if (int.TryParse(categoryFilter, out var catId))
+        if (category.HasValue)
         {
-            query = query.Where(s => s.IdCategoria == catId);
+            query = query.Where(s => s.IdCategoria == category.Value);
         }
 
-        if (!string.IsNullOrWhiteSpace(cityFilter))
+        if (!string.IsNullOrWhiteSpace(city))
         {
-            query = query.Where(s => s.IdProveedorNavigation != null && s.IdProveedorNavigation.Ciudad == cityFilter);
+            query = query.Where(s => s.IdProveedorNavigation != null && s.IdProveedorNavigation.Ciudad == city);
         }
 
-        if (verifiedOnly)
+        if (verified)
         {
             query = query.Where(s => s.IdProveedorNavigation != null && s.IdProveedorNavigation.Verificado == true);
         }
@@ -126,4 +124,9 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+    public IActionResult Compania() => View();
+    public IActionResult Soporte() => View();
+    public IActionResult Privacidad() => View();
+    public IActionResult Terminos() => View();
 }

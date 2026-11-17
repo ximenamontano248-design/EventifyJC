@@ -1,0 +1,174 @@
+﻿@model List<Reserva>
+@{
+    ViewData["Title"] = "Mis Reservas · Eventify JC";
+}
+
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div>
+            <h1 class="font-display text-3xl font-extrabold text-primary">Mis Reservas</h1>
+            <p class="mt-1 text-muted-foreground">Historial de eventos reservados.</p>
+        </div>
+        <a href="/Organizador" class="rounded-lg border border-border px-4 py-2 text-sm hover:bg-secondary transition">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Volver al dashboard
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="mb-4 rounded-lg bg-green-50 p-4 text-sm text-green-800 border border-green-200">
+            <i class="fa-solid fa-check-circle mr-1"></i> @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800 border border-red-200">
+            <i class="fa-solid fa-exclamation-circle mr-1"></i> @TempData["Error"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="rounded-2xl border border-dashed border-border bg-card p-12 text-center">
+            <i class="fa-solid fa-calendar-check text-4xl text-muted-foreground"></i>
+            <p class="mt-3 text-muted-foreground">Aún no tienes reservas confirmadas.</p>
+        </div>
+    }
+    else
+    {
+        <div class="space-y-4">
+            @foreach (var r in Model)
+            {
+                var pago = r.Pagos?.FirstOrDefault();
+                var badge = r.Estado switch
+                {
+                    "finalizada" => "bg-green-100 text-green-800",
+                    "cancelada" => "bg-red-100 text-red-800",
+                    _ => "bg-blue-100 text-blue-800"
+                };
+
+                var estadoTexto = r.Estado switch
+                {
+                    "finalizada" => "Finalizada",
+                    "cancelada" => "Cancelada",
+                    _ => "Confirmada"
+                };
+
+                <div class="rounded-2xl border border-border bg-card p-5 card-soft">
+                    <div class="flex flex-wrap items-start justify-between gap-4">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="font-semibold text-primary">Reserva #@r.IdReserva</h3>
+                                <span class="rounded-full px-2.5 py-0.5 text-[10px] font-medium @badge">@estadoTexto</span>
+                                @if (pago != null)
+                                {
+                                    <span class="rounded-full bg-green-50 px-2.5 py-0.5 text-[10px] font-medium text-green-700">
+                                        <i class="fa-solid fa-check mr-1"></i> Pagado
+                                    </span>
+                                }
+                            </div>
+                            <p class="mt-1 text-sm text-muted-foreground">
+                                <i class="fa-solid fa-store mr-1"></i>@r.IdCotizacionNavigation?.IdProveedorNavigation?.NombreComercial
+                                · <i class="fa-solid fa-briefcase ml-2 mr-1"></i>@r.IdCotizacionNavigation?.IdServicioNavigation?.Nombre
+                            </p>
+                            <p class="text-sm text-muted-foreground">
+                                <i class="fa-solid fa-calendar mr-1"></i>Evento: @r.IdCotizacionNavigation?.IdSolicitudNavigation?.FechaEvento.ToString("dd/MM/yyyy")
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs uppercase tracking-wider text-muted-foreground">Total</p>
+                            <p class="text-2xl font-bold text-accent">$ @r.MontoFinal.ToString("N0")</p>
+                            <p class="text-xs text-muted-foreground mt-1">Comisión: $ @r.ComisionEventify.ToString("N0")</p>
+                        </div>
+                    </div>
+
+                    @if (pago == null && r.Estado == "confirmada")
+                    {
+                        <div class="mt-4 pt-4 border-t border-border">
+                            <form asp-controller="Organizador" asp-action="SimularPago" method="post" class="flex flex-wrap items-end gap-3">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="idReserva" value="@r.IdReserva" />
+                                <div class="flex-1 min-w-[200px]">
+                                    <label class="block text-xs font-semibold text-muted-foreground mb-1">Método de pago</label>
+                                    <select name="metodo" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+                                        <option value="tarjeta_credito">Tarjeta de crédito</option>
+                                        <option value="pse">PSE</option>
+                                        <option value="nequi">Nequi</option>
+                                        <option value="efectivo">Efectivo</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white hover:bg-accent/90 transition">
+                                    <i class="fa-solid fa-credit-card mr-1"></i> Simular pago
+                                </button>
+                            </form>
+                        </div>
+                    }
+
+                    @if (pago != null)
+                    {
+                        <div class="mt-4 pt-4 border-t border-border text-xs text-muted-foreground">
+                            <i class="fa-solid fa-receipt mr-1"></i>
+                            Pago confirmado con @pago.Metodo el @pago.FechaPago?.ToString("dd/MM/yyyy HH:mm")
+                            · Transacción: <span class="font-mono">@pago.IdTransaccionExterna</span>
+                        </div>
+                    }
+
+                    @if (r.Estado == "finalizada")
+                    {
+                        var fechaEvento = r.IdCotizacionNavigation?.IdSolicitudNavigation?.FechaEvento;
+                        var puedeCalificar = fechaEvento.HasValue && fechaEvento.Value <= DateOnly.FromDateTime(DateTime.Now);
+                        var yaCalificado = r.Calificacions != null && r.Calificacions.Any();
+
+                        if (yaCalificado)
+                        {
+                            var cal = r.Calificacions.First();
+                            <div class="mt-4 pt-4 border-t border-border">
+                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                    <div>
+                                        <p class="text-xs text-muted-foreground">Tu calificación</p>
+                                        <div class="flex items-center gap-1 mt-1">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                <i class="fa-solid fa-star text-sm @(i <= cal.Puntuacion ? "text-yellow-400" : "text-gray-300")"></i>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xs text-green-700">
+                                            <i class="fa-solid fa-check-circle"></i> Calificado
+                                        </span>
+                                        <a asp-controller="Organizador" asp-action="Calificar" asp-route-idReserva="@r.IdReserva"
+                                           class="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-xs text-accent hover:bg-accent/10 transition">
+                                            <i class="fa-solid fa-pen"></i> Editar
+                                        </a>
+                                    </div>
+                                </div>
+                                @if (!string.IsNullOrEmpty(cal.Comentario))
+                                {
+                                    <p class="mt-2 text-xs text-muted-foreground italic">"@cal.Comentario"</p>
+                                }
+                            </div>
+                        }
+                        else if (puedeCalificar)
+                        {
+                            <div class="mt-4 pt-4 border-t border-border">
+                                <a asp-controller="Organizador" asp-action="Calificar" asp-route-idReserva="@r.IdReserva"
+                                   class="inline-flex items-center rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-yellow-900 hover:bg-yellow-500 transition">
+                                    <i class="fa-solid fa-star mr-1"></i> Calificar servicio
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="mt-4 pt-4 border-t border-border text-xs text-muted-foreground">
+                                <i class="fa-solid fa-clock mr-1"></i>
+                                Podrás calificar después del evento (@fechaEvento?.ToString("dd/MM/yyyy"))
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>

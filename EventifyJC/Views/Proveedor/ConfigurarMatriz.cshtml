@@ -1,0 +1,185 @@
+﻿@model EventifyJC.Models.MatrizPrecioViewModel
+@{
+    ViewData["Title"] = "Configurar matriz de precios";
+    var preciosExistentes = Model.Precios ?? new Dictionary<int, Dictionary<int, decimal>>();
+}
+
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <a href="/Proveedor" class="inline-flex items-center text-sm text-accent hover:underline mb-4">
+        <i class="fa-solid fa-arrow-left mr-2"></i> Volver a mi negocio
+    </a>
+
+    <div class="mb-6">
+        <h1 class="font-display text-2xl font-bold text-primary">Matriz de precios</h1>
+        <p class="text-sm text-muted-foreground">Servicio: <strong>@Model.ServicioNombre</strong></p>
+    </div>
+
+    <form asp-action="GuardarMatriz" method="post" id="formMatriz">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="IdServicio" />
+        <input type="hidden" asp-for="ServicioNombre" />
+
+        <!-- ========================================================= -->
+        <!-- CONFIGURACIÓN -->
+        <!-- ========================================================= -->
+        <div class="rounded-2xl border border-border bg-card p-6 card-soft mb-6">
+            <h2 class="font-display text-lg font-bold text-primary mb-4">Configuración</h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-primary mb-1">Tipo</label>
+                    <select asp-for="Tipo" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+                        <option value="servicio">Servicio completo</option>
+                        <option value="unidad">Por unidad</option>
+                        <option value="hora">Por hora</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-primary mb-1">Cantidad mínima</label>
+                    <input asp-for="CantidadMinima" type="number" min="1" id="CantidadMinima"
+                           class="w-full rounded-lg border border-border px-3 py-2 text-sm" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-primary mb-1">Cantidad máxima</label>
+                    <input asp-for="CantidadMaxima" type="number" min="1" id="CantidadMaxima"
+                           class="w-full rounded-lg border border-border px-3 py-2 text-sm" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-primary mb-1">Incremento</label>
+                    <input asp-for="CantidadIncremento" type="number" min="1" id="CantidadIncremento"
+                           class="w-full rounded-lg border border-border px-3 py-2 text-sm" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-primary mb-1">Bloques de horas</label>
+                    <input asp-for="BloquesHoras" type="text" id="BloquesHoras"
+                           class="w-full rounded-lg border border-border px-3 py-2 text-sm" />
+                </div>
+            </div>
+
+            <p class="mt-3 text-xs text-muted-foreground">
+                <i class="fa-solid fa-info-circle"></i>
+                Ejemplo: cantidad mínima 50, máxima 500, incremento 50 → bloques: 50, 100, 150, ..., 500.
+            </p>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- TABLA DE PRECIOS -->
+        <!-- ========================================================= -->
+        <div class="rounded-2xl border border-border bg-card overflow-hidden card-soft mb-6">
+            <div class="border-b border-border bg-secondary/20 px-6 py-4 flex items-center justify-between">
+                <h2 class="font-display text-lg font-bold text-primary">
+                    <i class="fa-solid fa-table text-accent mr-2"></i>
+                    Precios por cantidad y horas
+                </h2>
+                <p class="text-xs text-muted-foreground">Deja en 0 los precios que no apliquen</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-secondary/30">
+                        <tr id="filaEncabezados">
+                            <!-- Se genera con JS -->
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoTabla">
+                        <!-- Se genera con JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- BOTONES -->
+        <!-- ========================================================= -->
+        <div class="flex justify-end gap-3">
+            <a href="/Proveedor" class="rounded-lg border border-border px-5 py-2.5 text-sm hover:bg-secondary transition">
+                Cancelar
+            </a>
+            <button type="submit" class="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white hover:bg-accent/90 transition">
+                <i class="fa-solid fa-save mr-1"></i> Guardar matriz
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // Precios existentes (del servidor)
+        const preciosExistentes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(preciosExistentes));
+
+        // =========================================================
+        // GENERAR LA TABLA DINÁMICAMENTE
+        // =========================================================
+        function regenerarTabla() {
+            const min = parseInt(document.getElementById('CantidadMinima').value) || 50;
+            const max = parseInt(document.getElementById('CantidadMaxima').value) || 500;
+            const inc = parseInt(document.getElementById('CantidadIncremento').value) || 50;
+            const bloquesHorasStr = document.getElementById('BloquesHoras').value || '4,6,8,24';
+
+            // Parsear horas
+            const horas = bloquesHorasStr.split(',')
+                .map(h => parseInt(h.trim()))
+                .filter(h => !isNaN(h) && h > 0);
+
+            // Generar cantidades
+            const cantidades = [];
+            for (let c = min; c <= max; c += inc) {
+                cantidades.push(c);
+            }
+
+            // Generar encabezados
+            const filaEncabezados = document.getElementById('filaEncabezados');
+            filaEncabezados.innerHTML = '<th class="px-4 py-3 text-left font-semibold text-primary">Cantidad</th>';
+            horas.forEach(h => {
+                filaEncabezados.innerHTML += `<th class="px-4 py-3 text-center font-semibold text-primary">${h} h</th>`;
+            });
+
+            // Generar filas
+            const cuerpoTabla = document.getElementById('cuerpoTabla');
+            cuerpoTabla.innerHTML = '';
+
+            cantidades.forEach(cantidad => {
+                let fila = `<tr class="border-t border-border">
+                    <td class="px-4 py-3 font-medium text-primary">${cantidad}</td>`;
+
+                horas.forEach(horas => {
+                    // Buscar precio existente
+                    let precio = 0;
+                    if (preciosExistentes[cantidad] && preciosExistentes[cantidad][horas]) {
+                        precio = preciosExistentes[cantidad][horas];
+                    }
+
+                    fila += `<td class="px-4 py-3">
+                        <input type="number" 
+                               name="Precios[${cantidad}][${horas}]" 
+                               value="${precio}" 
+                               min="0" 
+                               step="1000"
+                               class="w-full rounded-lg border border-border px-3 py-1.5 text-sm text-center" />
+                    </td>`;
+                });
+
+                fila += `</tr>`;
+                cuerpoTabla.innerHTML += fila;
+            });
+        }
+
+        // =========================================================
+        // EVENTOS
+        // =========================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            regenerarTabla();
+
+            // Regenerar al cambiar cualquier configuración
+            ['CantidadMinima', 'CantidadMaxima', 'CantidadIncremento', 'BloquesHoras'].forEach(id => {
+                document.getElementById(id).addEventListener('input', regenerarTabla);
+                document.getElementById(id).addEventListener('change', regenerarTabla);
+            });
+        });
+    </script>
+}

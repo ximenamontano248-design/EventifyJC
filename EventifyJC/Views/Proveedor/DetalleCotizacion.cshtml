@@ -1,0 +1,138 @@
+﻿@model Cotizacion
+@{
+    ViewData["Title"] = "Detalle de cotización · Eventify JC";
+
+    var badgeClass = Model.Estado switch
+    {
+        "aceptada" => "bg-green-100 text-green-800",
+        "rechazada" => "bg-red-100 text-red-800",
+        "expirada" => "bg-gray-100 text-gray-800",
+        _ => "bg-blue-100 text-blue-800"
+    };
+}
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <a href="/Proveedor/Cotizaciones" class="inline-flex items-center text-sm text-accent hover:underline mb-4">
+        <i class="fa-solid fa-arrow-left mr-2"></i> Volver a cotizaciones
+    </a>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="mb-4 rounded-lg bg-green-50 p-4 text-sm text-green-800 border border-green-200">
+            <i class="fa-solid fa-check-circle mr-1"></i> @TempData["Success"]
+        </div>
+    }
+
+    <div class="rounded-2xl border border-border bg-card overflow-hidden card-soft">
+
+        <!-- Header -->
+        <div class="bg-secondary/30 px-6 py-4 border-b border-border flex items-center justify-between">
+            <div>
+                <h1 class="font-display text-2xl font-bold text-primary">Cotización #@Model.IdCotizacion</h1>
+                <p class="text-sm text-muted-foreground">Enviada el @Model.FechaEnvio?.ToString("dd/MM/yyyy HH:mm")</p>
+            </div>
+            <span class="rounded-full px-3 py-1 text-xs font-semibold @badgeClass">
+                @Model.Estado
+            </span>
+        </div>
+
+        <div class="p-6 space-y-6">
+
+            <!-- Información del servicio -->
+            <div>
+                <h2 class="text-sm uppercase tracking-wider text-muted-foreground mb-2">Servicio cotizado</h2>
+                <div class="rounded-xl bg-secondary/20 p-4">
+                    <p class="font-semibold text-primary">@Model.IdServicioNavigation?.Nombre</p>
+                    <p class="text-sm text-muted-foreground mt-1">@Model.IdServicioNavigation?.Descripcion</p>
+                    <p class="text-xs text-muted-foreground mt-2">
+                        <i class="fa-solid fa-tag mr-1"></i>
+                        @Model.IdServicioNavigation?.IdCategoriaNavigation?.Nombre
+                    </p>
+                </div>
+            </div>
+
+            <!-- Solicitud del cliente -->
+            <div>
+                <h2 class="text-sm uppercase tracking-wider text-muted-foreground mb-2">Solicitud del cliente</h2>
+                <div class="rounded-xl bg-secondary/20 p-4 space-y-2">
+                    <p class="text-sm">
+                        <i class="fa-solid fa-user mr-2 text-accent"></i>
+                        <strong>@Model.IdSolicitudNavigation?.IdOrganizadorNavigation?.Nombre</strong>
+                    </p>
+                    <p class="text-sm">
+                        <i class="fa-solid fa-envelope mr-2 text-accent"></i>
+                        @Model.IdSolicitudNavigation?.IdOrganizadorNavigation?.Email
+                    </p>
+                    @if (!string.IsNullOrEmpty(Model.IdSolicitudNavigation?.IdOrganizadorNavigation?.Telefono))
+                    {
+                        <p class="text-sm">
+                            <i class="fa-solid fa-phone mr-2 text-accent"></i>
+                            @Model.IdSolicitudNavigation.IdOrganizadorNavigation.Telefono
+                        </p>
+                    }
+                    <p class="text-sm">
+                        <i class="fa-solid fa-calendar mr-2 text-accent"></i>
+                        <strong>Fecha del evento:</strong>
+                        @Model.IdSolicitudNavigation?.FechaEvento.ToString("dd/MM/yyyy")
+                    </p>
+                    <p class="text-sm">
+                        <i class="fa-solid fa-dollar-sign mr-2 text-accent"></i>
+                        <strong>Presupuesto del cliente:</strong>
+                        $ @(Model.IdSolicitudNavigation?.PresupuestoEstimado?.ToString("N0") ?? "No especificado")
+                    </p>
+                </div>
+            </div>
+
+            <!-- Descripción del evento -->
+            <div>
+                <h2 class="text-sm uppercase tracking-wider text-muted-foreground mb-2">Descripción del evento</h2>
+                <div class="rounded-xl bg-secondary/20 p-4">
+                    <p class="text-sm text-foreground">@Model.IdSolicitudNavigation?.DescripcionEvento</p>
+                </div>
+            </div>
+
+            <!-- Mi cotización -->
+            <div>
+                <h2 class="text-sm uppercase tracking-wider text-muted-foreground mb-2">Mi cotización</h2>
+                <div class="rounded-xl bg-accent/5 border border-accent/20 p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs uppercase tracking-wider text-muted-foreground">Monto ofrecido</p>
+                            <p class="text-3xl font-bold text-accent">$ @Model.Monto.ToString("N0")</p>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.Mensaje))
+                    {
+                        <div class="mt-4 pt-4 border-t border-accent/10">
+                            <p class="text-xs uppercase tracking-wider text-muted-foreground mb-1">Mensaje enviado</p>
+                            <p class="text-sm text-foreground">@Model.Mensaje</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            @if (Model.Estado == "enviada")
+            {
+                <div class="flex flex-wrap gap-3 pt-4 border-t border-border">
+                    <form asp-controller="Proveedor" asp-action="CambiarEstadoCotizacion" method="post" class="inline">
+                        <input type="hidden" name="id" value="@Model.IdCotizacion" />
+                        <input type="hidden" name="estado" value="aceptada" />
+                        <button type="submit" class="rounded-xl bg-green-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-green-700 transition">
+                            <i class="fa-solid fa-check mr-1"></i> Aceptar cotización
+                        </button>
+                    </form>
+                    <form asp-controller="Proveedor" asp-action="CambiarEstadoCotizacion" method="post" class="inline"
+                          onsubmit="return confirm('¿Rechazar esta cotización?');">
+                        <input type="hidden" name="id" value="@Model.IdCotizacion" />
+                        <input type="hidden" name="estado" value="rechazada" />
+                        <button type="submit" class="rounded-xl border border-red-200 px-6 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition">
+                            <i class="fa-solid fa-times mr-1"></i> Rechazar
+                        </button>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+</div>

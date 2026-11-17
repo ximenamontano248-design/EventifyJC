@@ -1,0 +1,268 @@
+﻿@model CalendarioDisponibilidadViewModel
+@{
+    ViewData["Title"] = $"Disponibilidad · {Model.ServicioNombre}";
+
+    var primerDia = new DateOnly(Model.Año, Model.Mes, 1);
+    var ultimoDia = primerDia.AddMonths(1).AddDays(-1);
+    var diasEnMes = ultimoDia.Day;
+    var diaSemanaInicio = (int)primerDia.DayOfWeek;
+
+    var cultura = new System.Globalization.CultureInfo("es-CO");
+    var nombreMes = cultura.DateTimeFormat.GetMonthName(Model.Mes);
+    nombreMes = char.ToUpper(nombreMes[0]) + nombreMes.Substring(1);
+
+    var mesAnterior = primerDia.AddMonths(-1);
+    var mesSiguiente = primerDia.AddMonths(1);
+
+    var hoy = DateOnly.FromDateTime(DateTime.Now);
+}
+
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <a href="/Proveedor" class="inline-flex items-center text-sm text-accent hover:underline mb-4">
+        <i class="fa-solid fa-arrow-left mr-2"></i> Volver a mi negocio
+    </a>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="mb-4 rounded-lg bg-green-50 p-4 text-sm text-green-800 border border-green-200">
+            <i class="fa-solid fa-check-circle mr-1"></i> @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800 border border-red-200">
+            <i class="fa-solid fa-exclamation-circle mr-1"></i> @TempData["Error"]
+        </div>
+    }
+
+    <!-- Encabezado -->
+    <div class="rounded-2xl border border-border bg-card p-6 card-soft mb-6">
+        <div class="flex items-center gap-3">
+            <div class="h-12 w-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+                <i class="fa-solid fa-calendar-alt text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-display text-2xl font-bold text-primary">Disponibilidad</h1>
+                <p class="text-sm text-muted-foreground">@Model.ServicioNombre</p>
+            </div>
+        </div>
+
+        <div class="mt-4 rounded-lg bg-secondary/40 p-3 text-xs text-muted-foreground">
+            <p><i class="fa-solid fa-info-circle mr-1 text-accent"></i>
+                <strong>Instrucciones:</strong> Haz click en una fecha para marcarla como disponible o no disponible.
+                Los días con reservas confirmadas aparecen bloqueados automáticamente.</p>
+        </div>
+
+        <!-- Leyenda -->
+        <div class="mt-4 flex flex-wrap gap-4 text-xs">
+            <div class="flex items-center gap-2">
+                <div class="h-4 w-4 rounded bg-white border border-border"></div>
+                <span class="text-muted-foreground">Disponible</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="h-4 w-4 rounded bg-red-100 border border-red-300"></div>
+                <span class="text-muted-foreground">Ocupado (manual)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="h-4 w-4 rounded bg-blue-100 border border-blue-300"></div>
+                <span class="text-muted-foreground">Con reserva</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="h-4 w-4 rounded bg-gray-100 border border-gray-200"></div>
+                <span class="text-muted-foreground">Fecha pasada</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendario -->
+    <div class="rounded-2xl border border-border bg-card overflow-hidden card-soft">
+
+        <!-- Header del mes -->
+        <div class="border-b border-border bg-secondary/30 px-6 py-4 flex items-center justify-between">
+            <a href="/Proveedor/Calendario/@Model.IdServicio?año=@mesAnterior.Year&mes=@mesAnterior.Month"
+               class="rounded-lg border border-border px-3 py-1.5 text-sm hover:bg-white transition">
+                <i class="fa-solid fa-chevron-left"></i>
+            </a>
+            <h2 class="font-display text-lg font-bold text-primary">
+                @nombreMes @Model.Año
+            </h2>
+            <a href="/Proveedor/Calendario/@Model.IdServicio?año=@mesSiguiente.Year&mes=@mesSiguiente.Month"
+               class="rounded-lg border border-border px-3 py-1.5 text-sm hover:bg-white transition">
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+        </div>
+
+        <!-- Días de la semana -->
+        <div class="grid grid-cols-7 border-b border-border bg-secondary/20">
+            @foreach (var dia in new[] { "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" })
+            {
+                <div class="py-2 text-center text-xs font-semibold text-muted-foreground uppercase">
+                    @dia
+                </div>
+            }
+        </div>
+
+        <!-- Días del mes -->
+        <div class="grid grid-cols-7">
+            @for (int i = 0; i < diaSemanaInicio; i++)
+            {
+                <div class="aspect-square border-b border-r border-border bg-secondary/10"></div>
+            }
+
+            @for (int dia = 1; dia <= diasEnMes; dia++)
+            {
+                var fecha = new DateOnly(Model.Año, Model.Mes, dia);
+                var esHoy = fecha == hoy;
+                var esPasado = fecha < hoy;
+                var estaOcupado = Model.FechasOcupadas.Contains(fecha);
+                var estaReservado = Model.FechasReservadas.Contains(fecha);
+
+                string clase;
+                string icono = "";
+                bool clickable = !esPasado && !estaReservado;
+
+                if (estaReservado)
+                {
+                    clase = "bg-blue-100 border-blue-300 cursor-not-allowed";
+                    icono = "<i class='fa-solid fa-lock text-blue-600 text-xs'></i>";
+                }
+                else if (estaOcupado)
+                {
+                    clase = "bg-red-100 border-red-300 hover:bg-red-200 cursor-pointer";
+                    icono = "<i class='fa-solid fa-ban text-red-600 text-xs'></i>";
+                }
+                else if (esPasado)
+                {
+                    clase = "bg-gray-100 border-gray-200 cursor-not-allowed";
+                }
+                else
+                {
+                    clase = "bg-white border-border hover:bg-green-50 cursor-pointer";
+                }
+
+                if (esHoy)
+                {
+                    clase += " ring-2 ring-accent";
+                }
+
+                <div class="aspect-square border-b border-r border-border p-2 transition @clase relative"
+                     data-fecha="@fecha.ToString("yyyy-MM-dd")"
+                     data-ocupado="@estaOcupado.ToString().ToLower()"
+                     data-clickable="@clickable.ToString().ToLower()"
+                     onclick="if(this.dataset.clickable === 'true') toggleFecha(this)">
+
+                    <div class="flex items-start justify-between h-full">
+                        <span class="text-sm font-medium @(esHoy ? "text-accent font-bold" : "text-primary")">
+                            @dia
+                        </span>
+                        @Html.Raw(icono)
+                    </div>
+                </div>
+            }
+
+            @{
+                var diasUsados = diaSemanaInicio + diasEnMes;
+                var restantes = (7 - (diasUsados % 7)) % 7;
+            }
+            @for (int i = 0; i < restantes; i++)
+            {
+                <div class="aspect-square border-b border-r border-border bg-secondary/10"></div>
+            }
+        </div>
+    </div>
+
+    <!-- Formularios ocultos -->
+    <form id="formMarcarOcupado" asp-controller="Proveedor" asp-action="MarcarOcupado" method="post" style="display:none;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="idServicio" value="@Model.IdServicio" />
+        <input type="hidden" name="fecha" id="fechaOcupado" />
+        <input type="hidden" name="motivo" id="motivoOcupado" />
+    </form>
+
+    <form id="formMarcarDisponible" asp-controller="Proveedor" asp-action="MarcarDisponible" method="post" style="display:none;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="idServicio" value="@Model.IdServicio" />
+        <input type="hidden" name="fecha" id="fechaDisponible" />
+    </form>
+
+    <!-- Modal de motivo -->
+    <div id="modalMotivo" style="display:none;" class="fixed inset-0 bg-black/50 z-50 items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+            <h3 class="font-display text-lg font-bold text-primary mb-2">
+                <i class="fa-solid fa-ban text-red-500 mr-2"></i>Marcar como no disponible
+            </h3>
+            <p class="text-sm text-muted-foreground mb-4">
+                Fecha seleccionada: <strong id="fechaModal"></strong>
+            </p>
+            <label class="block text-sm font-medium text-primary mb-1">Motivo (opcional)</label>
+            <input type="text" id="inputMotivo" maxlength="200" placeholder="Ej: Evento privado, viaje, mantenimiento..."
+                   class="w-full rounded-lg border border-border px-3 py-2 text-sm mb-4" />
+            <div class="flex gap-2 justify-end">
+                <button type="button" onclick="cerrarModal()"
+                        class="rounded-lg border border-border px-4 py-2 text-sm hover:bg-secondary transition">
+                    Cancelar
+                </button>
+                <button type="button" onclick="confirmarOcupado()"
+                        class="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 transition">
+                    <i class="fa-solid fa-ban mr-1"></i> Marcar ocupado
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let fechaSeleccionada = '';
+
+        function toggleFecha(elemento) {
+            const fecha = elemento.dataset.fecha;
+            const estaOcupado = elemento.dataset.ocupado === 'true';
+
+            console.log('Clic en fecha:', fecha, '| Ocupado:', estaOcupado);
+
+            if (estaOcupado) {
+                // Está ocupado → liberar
+                if (confirm('¿Marcar esta fecha como DISPONIBLE?')) {
+                    document.getElementById('fechaDisponible').value = fecha;
+                    document.getElementById('formMarcarDisponible').submit();
+                }
+            } else {
+                // Está disponible → abrir modal de motivo
+                fechaSeleccionada = fecha;
+                document.getElementById('fechaModal').textContent = fecha;
+                document.getElementById('inputMotivo').value = '';
+
+                const modal = document.getElementById('modalMotivo');
+                modal.style.display = 'flex'; // Mostrar modal con display flex
+
+                setTimeout(() => document.getElementById('inputMotivo').focus(), 100);
+            }
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalMotivo').style.display = 'none'; // Ocultar modal
+            fechaSeleccionada = '';
+        }
+
+        function confirmarOcupado() {
+            if (!fechaSeleccionada) return;
+
+            const motivo = document.getElementById('inputMotivo').value;
+            document.getElementById('fechaOcupado').value = fechaSeleccionada;
+            document.getElementById('motivoOcupado').value = motivo;
+            document.getElementById('formMarcarOcupado').submit();
+        }
+
+        // Cerrar modal con Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') cerrarModal();
+        });
+
+        // Cerrar modal al hacer click fuera
+        document.getElementById('modalMotivo')?.addEventListener('click', (e) => {
+            if (e.target.id === 'modalMotivo') cerrarModal();
+        });
+    </script>
+}

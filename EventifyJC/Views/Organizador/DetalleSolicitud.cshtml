@@ -1,0 +1,139 @@
+﻿@model SolicitudCotizacion
+@{
+    ViewData["Title"] = $"Solicitud #{Model.IdSolicitud} · Eventify JC";
+}
+
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <a href="/Organizador/MisSolicitudes" class="inline-flex items-center text-sm text-accent hover:underline mb-4">
+        <i class="fa-solid fa-arrow-left mr-2"></i> Volver a mis solicitudes
+    </a>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="mb-4 rounded-lg bg-green-50 p-4 text-sm text-green-800 border border-green-200">
+            <i class="fa-solid fa-check-circle mr-1"></i> @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800 border border-red-200">
+            <i class="fa-solid fa-exclamation-circle mr-1"></i> @TempData["Error"]
+        </div>
+    }
+
+    <!-- Encabezado -->
+    <div class="rounded-2xl border border-border bg-card p-6 card-soft mb-6">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+                <h1 class="font-display text-2xl font-bold text-primary">Solicitud #@Model.IdSolicitud</h1>
+                <p class="mt-1 text-sm text-muted-foreground">
+                    <i class="fa-solid fa-calendar mr-1"></i> Evento: @Model.FechaEvento.ToString("dd/MM/yyyy")
+                    · <i class="fa-solid fa-clock ml-2 mr-1"></i> Publicada: @Model.FechaSolicitud?.ToString("dd/MM/yyyy")
+                </p>
+                <p class="mt-3 text-sm text-foreground">@Model.DescripcionEvento</p>
+            </div>
+            <div class="text-right">
+                <p class="text-xs uppercase tracking-wider text-muted-foreground">Presupuesto</p>
+                <p class="text-2xl font-bold text-accent">$ @(Model.PresupuestoEstimado?.ToString("N0") ?? "—")</p>
+                <span class="mt-2 inline-block rounded-full bg-secondary/60 px-2.5 py-0.5 text-[10px] text-muted-foreground">@Model.Estado</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cotizaciones recibidas -->
+    <h2 class="font-display text-xl font-bold text-primary mb-4">
+        Cotizaciones recibidas (@(Model.Cotizacions?.Count ?? 0))
+    </h2>
+
+    @if (Model.Cotizacions == null || !Model.Cotizacions.Any())
+    {
+        <div class="rounded-2xl border border-dashed border-border bg-card p-12 text-center">
+            <i class="fa-solid fa-hourglass-half text-4xl text-muted-foreground"></i>
+            <p class="mt-3 text-muted-foreground">Aún no has recibido cotizaciones para esta solicitud.</p>
+        </div>
+    }
+    else
+    {
+        <div class="space-y-4">
+            @foreach (var c in Model.Cotizacions.OrderByDescending(x => x.FechaEnvio))
+            {
+                var badge = c.Estado switch
+                {
+                    "aceptada" => "bg-green-100 text-green-800",
+                    "rechazada" => "bg-red-100 text-red-800",
+                    "expirada" => "bg-gray-100 text-gray-800",
+                    _ => "bg-blue-100 text-blue-800"
+                };
+
+                <div class="rounded-2xl border border-border bg-card p-5 card-soft">
+                    <div class="flex flex-wrap items-start justify-between gap-4">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="font-semibold text-primary">@c.IdServicioNavigation?.Nombre</h3>
+                                <span class="rounded-full px-2.5 py-0.5 text-[10px] font-medium @badge">@c.Estado</span>
+                            </div>
+                            <p class="mt-1 text-sm text-muted-foreground">
+                                <i class="fa-solid fa-store mr-1"></i>@c.IdProveedorNavigation?.NombreComercial
+                                · <i class="fa-solid fa-tag ml-2 mr-1"></i>@c.IdServicioNavigation?.IdCategoriaNavigation?.Nombre
+                            </p>
+                            @if (!string.IsNullOrEmpty(c.Mensaje))
+                            {
+                                <p class="mt-3 text-sm text-muted-foreground italic">"@c.Mensaje"</p>
+                            }
+                        </div>
+                        <div class="text-right shrink-0">
+                            <p class="text-2xl font-bold text-accent">$ @c.Monto.ToString("N0")</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-border flex flex-wrap items-center justify-between gap-3">
+                        <p class="text-xs text-muted-foreground">
+                            Recibida: @c.FechaEnvio?.ToString("dd/MM/yyyy HH:mm")
+                        </p>
+
+                        <div class="flex flex-wrap gap-2">
+                            @if (c.Estado == "enviada")
+                            {
+                                <form asp-controller="Organizador" asp-action="AceptarCotizacion" method="post" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@c.IdCotizacion" />
+                                    <button type="submit" class="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700 transition">
+                                        <i class="fa-solid fa-check mr-1"></i> Aceptar
+                                    </button>
+                                </form>
+                                <form asp-controller="Organizador" asp-action="RechazarCotizacion" method="post" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@c.IdCotizacion" />
+                                    <button type="submit" class="rounded-lg border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 transition">
+                                        <i class="fa-solid fa-times mr-1"></i> Rechazar
+                                    </button>
+                                </form>
+                            }
+                            else if (c.Estado == "aceptada" && c.Reserva == null)
+                            {
+                                <form asp-controller="Organizador" asp-action="ConfirmarReserva" method="post" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@c.IdCotizacion" />
+                                    <button type="submit" class="rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-white hover:bg-accent/90 transition">
+                                        <i class="fa-solid fa-calendar-check mr-1"></i> Confirmar reserva
+                                    </button>
+                                </form>
+                            }
+                            else if (c.Reserva != null)
+                            {
+                                <span class="rounded-lg bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-700">
+                                    <i class="fa-solid fa-check-circle mr-1"></i> Reserva #@c.Reserva.IdReserva confirmada
+                                </span>
+                                <a href="/Organizador/MisReservas"
+                                   class="rounded-lg border border-border px-3 py-1.5 text-xs hover:bg-secondary transition">
+                                    Ver reservas
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

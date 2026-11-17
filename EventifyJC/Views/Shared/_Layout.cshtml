@@ -5,114 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Eventify JC</title>
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Tu CSS personalizado -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     <style>
-        body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f8fafc;
-        color: #1e293b;
-        }
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: #f8fafc;
+                color: #1e293b;
+            }
 
-        .card-soft {
-        box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
-        }
+            .card-soft {
+                box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+            }
 
-        .brand-gradient {
-        background: linear-gradient(135deg, #1b2340 0%, #2a1f4a 50%, #1b2340 100%);
-        }
+            .brand-gradient {
+                background: linear-gradient(135deg, #1b2340 0%, #2a1f4a 50%, #1b2340 100%);
+            }
 
-        .hero-radial {
-        background: radial-gradient(circle at 20% 40%, #2a1f4a 0%, #0f0a1a 100%);
-        }
+            .hero-radial {
+                background: radial-gradient(circle at 20% 40%, #2a1f4a 0%, #0f0a1a 100%);
+            }
 
-        .text-accent {
-        color: #e8823c;
-        }
+            .text-accent {
+                color: #e8823c;
+            }
 
-        .bg-accent {
-        background-color: #e8823c;
-        }
+            .bg-accent {
+                background-color: #e8823c;
+            }
 
-        .border-accent {
-        border-color: #e8823c;
-        }
+            .border-accent {
+                border-color: #e8823c;
+            }
 
-        .hover\:bg-accent\/90:hover {
-        background-color: rgba(232, 130, 60, 0.9);
-        }
+            .hover\:bg-accent\/90:hover {
+                background-color: rgba(232, 130, 60, 0.9);
+            }
 
-        .focus\:border-accent:focus {
-        border-color: #e8823c;
-        }
+            .focus\:border-accent:focus {
+                border-color: #e8823c;
+            }
 
-        .focus\:ring-accent:focus {
-        --tw-ring-color: #e8823c;
-        }
+            .focus\:ring-accent:focus {
+                --tw-ring-color: #e8823c;
+            }
 
-        .bg-primary {
-        background-color: #1b2340;
-        }
+            .bg-primary {
+                background-color: #1b2340;
+            }
 
-        .text-primary {
-        color: #1b2340;
-        }
+            .text-primary {
+                color: #1b2340;
+            }
 
-        .border-primary {
-        border-color: #1b2340;
-        }
+            .border-primary {
+                border-color: #1b2340;
+            }
 
-        .bg-card {
-        background-color: #ffffff;
-        }
+            .bg-card {
+                background-color: #ffffff;
+            }
 
-        .border-border {
-        border-color: #e6e5e0;
-        }
+            .border-border {
+                border-color: #e6e5e0;
+            }
 
-        .text-muted-foreground {
-        color: #6b7080;
-        }
+            .text-muted-foreground {
+                color: #6b7080;
+            }
 
-        .text-primary-foreground {
-        color: #ffffff;
-        }
+            .text-primary-foreground {
+                color: #ffffff;
+            }
 
-        .bg-white\/10 {
-        background-color: rgba(255, 255, 255, 0.1);
-        }
+            .bg-white\/10 {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
 
-        .hover\:bg-white\/15:hover {
-        background-color: rgba(255, 255, 255, 0.15);
-        }
+            .hover\:bg-white\/15:hover {
+                background-color: rgba(255, 255, 255, 0.15);
+            }
 
-        /* Ajustes específicos */
-        .nav-link {
-        transition: all 0.2s ease;
-        }
+            .nav-link {
+                transition: all 0.2s ease;
+            }
 
-        .nav-link:hover {
-        color: #1e293b;
-        background-color: #f1f5f9;
-        }
+                .nav-link:hover {
+                    color: #1e293b;
+                    background-color: #f1f5f9;
+                }
 
-        @@media (max-width: 767px) {
-        .nav-container {
-        display: none;
-        }
-        }
+            @@media (max-width: 767px) {
+                .nav-container {
+                    display: none;
+                }
+            }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
@@ -120,7 +115,7 @@
     <!-- HEADER -->
     <header class="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href="/" class="flex items-center space-x-3">
+            <a asp-controller="Home" asp-action="Index" class="flex items-center space-x-3">
                 <div class="bg-primary text-accent p-2 rounded-xl flex items-center justify-center">
                     <i class="fa-solid fa-sparkles text-lg"></i>
                 </div>
@@ -131,31 +126,41 @@
             </a>
 
             <nav class="hidden md:flex space-x-2 text-sm font-medium items-center">
-                <a href="/" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Inicio</a>
-                <a href="/marketplace" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Servicios</a>
+                <a asp-controller="Home" asp-action="Index" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Inicio</a>
+                <a asp-controller="Explorador" asp-action="Index" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Explorar</a>
 
-                @if (User.Identity.IsAuthenticated)
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
-                    @if (User.IsInRole("proveedor"))
+                    @if (User.IsInRole("organizador"))
                     {
-                        <a href="/Proveedor" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Mi Negocio</a>
+                        <a asp-controller="Organizador" asp-action="Index" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Mis Eventos</a>
+                        <a asp-controller="Organizador" asp-action="MisSolicitudes" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Solicitudes</a>
+                        <a asp-controller="Organizador" asp-action="MisCotizaciones" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Cotizaciones</a>
+                        <a asp-controller="Organizador" asp-action="MisReservas" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Reservas</a>
                     }
-                    @if (User.IsInRole("admin"))
+                    else if (User.IsInRole("proveedor"))
                     {
-                        <a href="/Admin" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Admin</a>
+                        <a asp-controller="Proveedor" asp-action="Index" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Mi Negocio</a>
+                        <a asp-controller="Proveedor" asp-action="Cotizaciones" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Cotizaciones</a>
+                        <a asp-controller="Proveedor" asp-action="Oportunidades" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Oportunidades</a>
+                        <a asp-controller="Proveedor" asp-action="SubirDocumentos" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Verificación</a>
                     }
-                  
+                    else if (User.IsInRole("admin") || User.IsInRole("administrador"))
+                    {
+                        <a asp-controller="Admin" asp-action="Index" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Panel Admin</a>
+                        <a asp-controller="Admin" asp-action="RevisarDocumentos" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Verificación</a>
+                        <a asp-controller="Admin" asp-action="Auditoria" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Auditoría</a>
+                    }
                 }
                 else
                 {
-                    <a href="/Account/Register" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Ser Proveedor</a>
+                    <a asp-controller="Account" asp-action="Register" class="nav-link px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 transition">Ser Proveedor</a>
                 }
             </nav>
 
             <div class="flex items-center space-x-3">
-                @if (User.Identity.IsAuthenticated)
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
-                    <!-- Menú desplegable de usuario -->
                     <div class="relative">
                         <button id="userMenuBtn" class="flex items-center space-x-2 text-sm font-medium text-slate-700 hover:text-slate-900 transition px-3 py-2 rounded-full hover:bg-slate-100">
                             <i class="fa-solid fa-user-circle text-lg"></i>
@@ -163,36 +168,19 @@
                             <i class="fa-solid fa-chevron-down text-xs"></i>
                         </button>
 
-                        <!-- Dropdown -->
                         <div id="userDropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
-                            @if (User.IsInRole("proveedor"))
-                            {
-                                <a href="/Proveedor/PerfilEmpresa" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
-                                    <i class="fa-solid fa-building mr-2"></i>Mi Empresa
-                                </a>
-                                <a href="/Proveedor" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
-                                    <i class="fa-solid fa-briefcase mr-2"></i>Mis Servicios
-                                </a>
-                                <div class="border-t border-gray-100 my-1"></div>
-                            }
-
-                            @if (User.IsInRole("organizador"))
-                            {
-                                <a href="/Organizador" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
-                                    <i class="fa-solid fa-calendar-check mr-2"></i>Mis Eventos
-                                </a>
-                                <div class="border-t border-gray-100 my-1"></div>
-                            }
-
-                            <a href="/Account/Perfil" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
-                                <i class="fa-solid fa-user mr-2"></i>Mi Perfil
+                            <a asp-controller="Explorador" asp-action="Index" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                <i class="fa-solid fa-compass mr-2"></i>Ver servicios
                             </a>
-                            <a href="/Account/CambiarContrasena" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
-                                <i class="fa-solid fa-key mr-2"></i>Cambiar Contraseña
-                            </a>
-
                             <div class="border-t border-gray-100 my-1"></div>
 
+                            <a asp-controller="Account" asp-action="Perfil" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                <i class="fa-solid fa-user mr-2"></i>Mi Perfil
+                            </a>
+                            <a asp-controller="Account" asp-action="CambiarContrasena" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                <i class="fa-solid fa-key mr-2"></i>Cambiar Contraseña
+                            </a>
+                            <div class="border-t border-gray-100 my-1"></div>
                             <form asp-controller="Account" asp-action="Logout" method="post" class="block">
                                 <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
                                     <i class="fa-solid fa-sign-out-alt mr-2"></i>Cerrar sesión
@@ -203,8 +191,8 @@
                 }
                 else
                 {
-                    <a href="/Account/Login" class="text-sm font-medium text-slate-700 hover:text-primary px-3 py-2 transition">Iniciar sesión</a>
-                    <a href="/Account/Register" class="text-sm font-semibold bg-accent text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition">Crear cuenta</a>
+                    <a asp-controller="Account" asp-action="Login" class="text-sm font-medium text-slate-700 hover:text-primary px-3 py-2 transition">Iniciar sesión</a>
+                    <a asp-controller="Account" asp-action="Register" class="text-sm font-semibold bg-accent text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition">Crear cuenta</a>
                 }
             </div>
         </div>
@@ -215,36 +203,38 @@
         @RenderBody()
     </main>
 
-    <!-- FOOTER -->
     <footer class="bg-primary text-slate-400 py-12 border-t border-white/10 mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
             <div>
                 <span class="text-white font-bold text-lg">Eventify JC</span>
-                <p class="mt-2 text-xs leading-relaxed text-slate-400">La plataforma colombiana que conecta organizadores y proveedores de eventos.</p>
+                <p class="mt-2 text-xs leading-relaxed text-slate-400">
+                    La plataforma colombiana que conecta organizadores y proveedores de eventos.
+                </p>
             </div>
             <div>
-                <h4 class="text-white font-semibold mb-3">Explora</h4>
+                <h4 class="text-white font-semibold mb-3">Servicios</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><a href="/marketplace" class="hover:text-white">Catering</a></li>
-                    <li><a href="/marketplace" class="hover:text-white">Decoración</a></li>
-                    <li><a href="/marketplace" class="hover:text-white">Salones</a></li>
-                    <li><a href="/marketplace" class="hover:text-white">Fotografía</a></li>
+                    <li><a asp-controller="Explorador" asp-action="Index" asp-route-categoriaId="1" class="hover:text-white">Catering</a></li>
+                    <li><a asp-controller="Explorador" asp-action="Index" asp-route-categoriaId="2" class="hover:text-white">Música</a></li>
+                    <li><a asp-controller="Explorador" asp-action="Index" asp-route-categoriaId="3" class="hover:text-white">Fotografía</a></li>
+                    <li><a asp-controller="Explorador" asp-action="Index" asp-route-categoriaId="4" class="hover:text-white">Decoración</a></li>
+                    <li><a asp-controller="Explorador" asp-action="Index" class="mt-2 inline-block font-semibold text-accent hover:text-white">Ver todo →</a></li>
                 </ul>
             </div>
             <div>
                 <h4 class="text-white font-semibold mb-3">Compañía</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><a href="#" class="hover:text-white">Sobre nosotros</a></li>
-                    <li><a href="#" class="hover:text-white">Cómo funciona</a></li>
-                    <li><a href="#" class="hover:text-white">Proveedores verificados</a></li>
+                    <li><a asp-controller="Home" asp-action="Compania" class="hover:text-white">Sobre nosotros</a></li>
+                    <li><a asp-controller="Home" asp-action="Compania" asp-fragment="como-funciona" class="hover:text-white">Cómo funciona</a></li>
+                    <li><a asp-controller="Home" asp-action="Compania" asp-fragment="proveedores-verificados" class="hover:text-white">Proveedores verificados</a></li>
                 </ul>
             </div>
             <div>
                 <h4 class="text-white font-semibold mb-3">Soporte</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><a href="#" class="hover:text-white">Ayuda</a></li>
-                    <li><a href="#" class="hover:text-white">Términos</a></li>
-                    <li><a href="#" class="hover:text-white">Privacidad</a></li>
+                    <li><a asp-controller="Home" asp-action="Soporte" class="hover:text-white">Ayuda</a></li>
+                    <li><a asp-controller="Home" asp-action="Terminos" class="hover:text-white">Términos</a></li>
+                    <li><a asp-controller="Home" asp-action="Privacidad" class="hover:text-white">Privacidad</a></li>
                 </ul>
             </div>
         </div>
@@ -256,17 +246,22 @@
     @await RenderSectionAsync("Scripts", required: false)
 
     <script>
-        document.getElementById('userMenuBtn').addEventListener('click', function(e) {
-        e.stopPropagation();
-        document.getElementById('userDropdown').classList.toggle('hidden');
-        });
+            (function () {
+                const btn = document.getElementById('userMenuBtn');
+                const dropdown = document.getElementById('userDropdown');
+                if (!btn || !dropdown) return;
 
-        document.addEventListener('click', function(e) {
-        if (!document.getElementById('userMenuBtn').contains(e.target) &&
-        !document.getElementById('userDropdown').contains(e.target)) {
-        document.getElementById('userDropdown').classList.add('hidden');
-        }
-        });
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+                        dropdown.classList.add('hidden');
+                    }
+                });
+            })();
     </script>
 </body>
 </html>

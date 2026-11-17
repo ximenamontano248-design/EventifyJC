@@ -1,0 +1,88 @@
+﻿@model List<Usuario>
+@{
+    ViewData["Title"] = "Usuarios · Admin";
+}
+
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <h1 class="font-display text-3xl font-extrabold text-primary">Gestión de usuarios</h1>
+    <p class="mt-1 text-muted-foreground">@ViewBag.Total usuarios coinciden con el filtro.</p>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="mt-4 rounded-lg bg-green-50 p-4 text-sm text-green-800 border border-green-200">@TempData["Success"]</div>
+    }
+
+    <form method="get" class="mt-6 flex flex-wrap gap-3">
+        <input type="text" name="q" value="@ViewBag.Q" placeholder="Buscar por nombre o email..."
+               class="flex-1 min-w-[200px] rounded-lg border border-border px-3 py-2 text-sm" />
+        <select name="rol" class="rounded-lg border border-border px-3 py-2 text-sm">
+            <option value="">Todos los roles</option>
+            <option value="organizador" selected="@(ViewBag.Rol == "organizador")">Organizador</option>
+            <option value="proveedor" selected="@(ViewBag.Rol == "proveedor")">Proveedor</option>
+            <option value="admin" selected="@(ViewBag.Rol == "admin")">Admin</option>
+        </select>
+        <select name="activo" class="rounded-lg border border-border px-3 py-2 text-sm">
+            <option value="">Todos los estados</option>
+            <option value="true" selected="@(ViewBag.Activo == true)">Activos</option>
+            <option value="false" selected="@(ViewBag.Activo == false)">Inactivos</option>
+        </select>
+        <button type="submit" class="rounded-lg bg-accent px-4 py-2 text-sm text-white font-medium">Filtrar</button>
+        <a href="/Admin/Usuarios" class="rounded-lg border border-border px-4 py-2 text-sm">Limpiar</a>
+    </form>
+
+    <div class="mt-6 rounded-2xl border border-border bg-card overflow-hidden card-soft overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead class="bg-secondary/30 text-left text-muted-foreground">
+                <tr>
+                    <th class="px-6 py-3">Nombre</th>
+                    <th class="px-6 py-3">Email</th>
+                    <th class="px-6 py-3">Rol</th>
+                    <th class="px-6 py-3">Registro</th>
+                    <th class="px-6 py-3">Estado</th>
+                    <th class="px-6 py-3 text-right">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr class="border-b border-border hover:bg-secondary/20 transition">
+                        <td class="px-6 py-3 font-medium text-primary">@u.Nombre</td>
+                        <td class="px-6 py-3 text-muted-foreground">@u.Email</td>
+                        <td class="px-6 py-3">
+                            <form asp-controller="Admin" asp-action="CambiarRol" method="post" class="inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@u.IdUsuario" />
+                                <select name="rol" onchange="this.form.submit()"
+                                        class="rounded-md border border-border px-2 py-1 text-xs bg-white">
+                                    <option value="organizador" selected="@(u.Rol == "organizador")">Organizador</option>
+                                    <option value="proveedor" selected="@(u.Rol == "proveedor")">Proveedor</option>
+                                    <option value="admin" selected="@(u.Rol == "admin")">Admin</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td class="px-6 py-3 text-muted-foreground">@u.FechaRegistro?.ToString("dd/MM/yyyy")</td>
+                        <td class="px-6 py-3">
+                            @if (u.Activo == true)
+                            {
+                                <span class="rounded-full bg-green-100 px-2.5 py-1 text-xs text-green-800">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="rounded-full bg-red-100 px-2.5 py-1 text-xs text-red-800">Inactivo</span>
+                            }
+                        </td>
+                        <td class="px-6 py-3 text-right">
+                            <form asp-controller="Admin" asp-action="AlternarActivo" method="post" class="inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@u.IdUsuario" />
+                                <button type="submit" class="rounded-lg border border-border px-3 py-1.5 text-xs hover:bg-secondary transition">
+                                    @(u.Activo == true ? "Desactivar" : "Activar")
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

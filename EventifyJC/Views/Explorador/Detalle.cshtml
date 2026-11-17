@@ -1,0 +1,224 @@
+﻿@model Servicio
+@{
+    ViewData["Title"] = $"{Model.Nombre} · Eventify JC";
+
+    var logueado = User.Identity?.IsAuthenticated == true;
+    var esOrganizador = User.IsInRole("organizador");
+    var esProveedor = User.IsInRole("proveedor");
+    var esAdmin = User.IsInRole("admin");
+}
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <a href="javascript:history.back()" class="inline-flex items-center text-sm text-accent hover:underline mb-6">
+        <i class="fa-solid fa-arrow-left mr-2"></i> Volver al explorador
+    </a>
+
+    <div class="grid gap-8 lg:grid-cols-[1.5fr_1fr]">
+
+        <!-- Imagen + Info -->
+        <div>
+            <div class="rounded-2xl overflow-hidden border border-border bg-card card-soft">
+                <img src="@(Model.ImagenUrl ?? "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=70")"
+                     alt="@Model.Nombre" class="w-full h-96 object-cover"
+                     onerror="this.src='https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=70'" />
+            </div>
+
+            <div class="mt-6">
+                <span class="inline-block rounded-full bg-secondary/60 px-3 py-1 text-xs font-medium text-muted-foreground">
+                    @Model.IdCategoriaNavigation?.Nombre
+                </span>
+                <h1 class="mt-3 font-display text-3xl font-extrabold text-primary">@Model.Nombre</h1>
+                <p class="mt-3 text-muted-foreground leading-relaxed">@Model.Descripcion</p>
+            </div>
+        </div>
+
+        <!-- Panel de acción -->
+        <aside class="space-y-4 self-start sticky top-24">
+            <div class="rounded-2xl border border-border bg-card p-6 card-soft">
+
+                <p class="text-xs uppercase tracking-wider text-muted-foreground">Precio base</p>
+                <p class="mt-1 text-3xl font-bold text-accent">$ @Model.PrecioBase.ToString("N0")</p>
+
+                <div class="mt-4 flex items-center gap-2">
+                    <span class="text-yellow-500">★★★★★</span>
+                    <span class="text-sm font-medium">@(Model.IdProveedorNavigation?.CalificacionPromedio?.ToString("F1") ?? "—")</span>
+                </div>
+
+                @if (!logueado)
+                {
+                    <a href="/Account/Login?returnUrl=/Organizador/CotizarServicio/@Model.IdServicio"
+                       class="mt-6 flex w-full items-center justify-center rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white hover:bg-accent/90 transition">
+                        <i class="fa-solid fa-paper-plane mr-2"></i> Cotizar este servicio
+                    </a>
+                    <p class="mt-2 text-center text-xs text-muted-foreground">
+                        Inicia sesión como organizador para continuar.
+                        <a href="/Account/Register?returnUrl=/Organizador/CotizarServicio/@Model.IdServicio"
+                           class="font-semibold text-accent hover:underline">Regístrate gratis</a>
+                    </p>
+                }
+                else if (esOrganizador)
+                {
+                    <a href="/Organizador/CotizarServicio/@Model.IdServicio"
+                       class="mt-6 flex w-full items-center justify-center rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white hover:bg-accent/90 transition">
+                        <i class="fa-solid fa-paper-plane mr-2"></i> Cotizar este servicio
+                    </a>
+                }
+                else if (esProveedor)
+                {
+                    <div class="mt-6 rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800 border border-yellow-200">
+                        <i class="fa-solid fa-info-circle mr-1"></i>
+                        Estás logueado como proveedor. Solo los organizadores pueden cotizar servicios.
+                    </div>
+                }
+                else if (esAdmin)
+                {
+                    <div class="mt-6 rounded-lg bg-blue-50 p-3 text-sm text-blue-800 border border-blue-200">
+                        <i class="fa-solid fa-shield-halved mr-1"></i>
+                        Estás logueado como administrador. Solo los organizadores pueden cotizar.
+                    </div>
+                }
+
+                <!-- Proveedor -->
+                <div class="mt-6 border-t border-border pt-4">
+                    <p class="text-xs uppercase tracking-wider text-muted-foreground">Proveedor</p>
+                    <div class="mt-2 flex items-center gap-3">
+                        <div class="h-12 w-12 rounded-xl bg-accent/10 flex items-center justify-center overflow-hidden">
+                            <img src="@(Model.IdProveedorNavigation?.LogoUrl ?? $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(Model.IdProveedorNavigation?.NombreComercial ?? "P")}&background=e8823c&color=fff")"
+                                 class="h-full w-full object-cover" />
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-medium text-primary truncate">@Model.IdProveedorNavigation?.NombreComercial</p>
+                            <p class="text-xs text-muted-foreground">
+                                <i class="fa-solid fa-location-dot"></i> @Model.IdProveedorNavigation?.Ciudad
+                            </p>
+                        </div>
+                    </div>
+
+                    @if (Model.IdProveedorNavigation?.Verificado == true)
+                    {
+                        <span class="mt-3 inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-1 text-xs text-green-800">
+                            <i class="fa-solid fa-check-circle"></i> Proveedor verificado
+                        </span>
+                    }
+
+                    <a href="/Proveedor/Ver/@Model.IdProveedor"
+                       class="mt-3 block text-center text-xs font-semibold text-accent hover:underline">
+                        Ver perfil completo →
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Calculadora de matriz de precios -->
+    @if (Model.MatrizPrecios != null && Model.MatrizPrecios.Any())
+    {
+        var cantidades = Model.MatrizPrecios.Select(m => m.Cantidad).Distinct().OrderBy(x => x).ToList();
+        var horas = Model.MatrizPrecios.Select(m => m.Horas).Distinct().OrderBy(x => x).ToList();
+
+        <div class="mt-10 rounded-2xl border border-border bg-card p-6 card-soft">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="h-10 w-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div>
+                    <h2 class="font-display text-xl font-bold text-primary">Calcula tu precio</h2>
+                    <p class="text-xs text-muted-foreground">Ajusta la cantidad y las horas para ver el precio</p>
+                </div>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                    <label class="block text-sm font-medium text-primary mb-1">
+                        <i class="fa-solid fa-cubes mr-1 text-accent"></i>Cantidad
+                    </label>
+                    <select id="cantidadSelect"
+                            class="w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent">
+                        @foreach (var c in cantidades)
+                        {
+                            <option value="@c">@c unidades</option>
+                        }
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-primary mb-1">
+                        <i class="fa-solid fa-clock mr-1 text-accent"></i>Horas
+                    </label>
+                    <select id="horasSelect"
+                            class="w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent">
+                        @foreach (var h in horas)
+                        {
+                            <option value="@h">@h horas</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-6 flex items-center justify-between border-t border-border pt-4">
+                <span class="text-sm text-muted-foreground">Precio estimado:</span>
+                <span id="precioCalculado" class="text-3xl font-bold text-accent">$ —</span>
+            </div>
+
+            <div class="mt-3 text-xs text-muted-foreground">
+                <i class="fa-solid fa-info-circle mr-1"></i>
+                El precio final puede variar según los detalles específicos de tu evento.
+            </div>
+        </div>
+    }
+
+    <!-- Servicios relacionados -->
+    @{
+        var relacionados = (List<ServiceDto>)ViewBag.Relacionados;
+    }
+    @if (relacionados != null && relacionados.Any())
+    {
+        <div class="mt-16">
+            <h2 class="font-display text-2xl font-bold text-primary">Servicios relacionados</h2>
+            <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                @foreach (var r in relacionados)
+                {
+                    <a href="/Explorador/Detalle/@r.Id"
+                       class="group rounded-2xl border border-border bg-card overflow-hidden card-soft transition hover:shadow-lg">
+                        <div class="h-32 overflow-hidden bg-slate-100">
+                            <img src="@(r.ImagenUrl ?? "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=600&q=70")"
+                                 class="h-full w-full object-cover transition group-hover:scale-105"
+                                 onerror="this.src='https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=600&q=70'" />
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold text-primary truncate">@r.Nombre</h3>
+                            <p class="text-xs text-muted-foreground truncate">@r.ProveedorNombre</p>
+                            <p class="mt-2 font-bold text-accent">$ @r.PrecioBase.ToString("N0")</p>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@if (Model.MatrizPrecios != null && Model.MatrizPrecios.Any())
+{
+    @section Scripts {
+        <script>
+            const matriz = [
+                @foreach (var m in Model.MatrizPrecios)
+                {
+                    @:{ cantidad: @m.Cantidad, horas: @m.Horas, precio: @m.Precio },
+                }
+            ];
+
+            function calcular() {
+                const c = parseInt(document.getElementById('cantidadSelect').value);
+                const h = parseInt(document.getElementById('horasSelect').value);
+                const item = matriz.find(x => x.cantidad === c && x.horas === h);
+                document.getElementById('precioCalculado').textContent =
+                    item ? '$ ' + item.precio.toLocaleString('es-CO') : 'No disponible';
+            }
+
+            document.getElementById('cantidadSelect').addEventListener('change', calcular);
+            document.getElementById('horasSelect').addEventListener('change', calcular);
+            calcular();
+        </script>
+    }
+}

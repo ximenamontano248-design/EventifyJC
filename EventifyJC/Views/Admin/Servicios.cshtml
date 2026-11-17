@@ -1,0 +1,71 @@
+﻿@model List<Servicio>
+@{
+    ViewData["Title"] = "Servicios · Admin";
+}
+
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <h1 class="font-display text-3xl font-extrabold text-primary">Servicios</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="mt-4 rounded-lg bg-green-50 p-4 text-sm text-green-800 border border-green-200">@TempData["Success"]</div>
+    }
+
+    <form method="get" class="mt-6 flex flex-wrap gap-3">
+        <input type="text" name="q" value="@ViewBag.Q" placeholder="Buscar servicio..."
+               class="flex-1 min-w-[200px] rounded-lg border border-border px-3 py-2 text-sm" />
+        <select name="categoriaId" class="rounded-lg border border-border px-3 py-2 text-sm">
+            <option value="">Todas las categorías</option>
+            @foreach (var cat in (List<Categorium>)ViewBag.Categorias)
+            {
+                <option value="@cat.IdCategoria" selected="@(ViewBag.CategoriaId == cat.IdCategoria)">@cat.Nombre</option>
+            }
+        </select>
+        <select name="disponibilidad" class="rounded-lg border border-border px-3 py-2 text-sm">
+            <option value="">Todas</option>
+            <option value="disponible" selected="@(ViewBag.Disponibilidad == "disponible")">Disponible</option>
+            <option value="bajo pedido" selected="@(ViewBag.Disponibilidad == "bajo pedido")">Bajo pedido</option>
+            <option value="no disponible" selected="@(ViewBag.Disponibilidad == "no disponible")">No disponible</option>
+        </select>
+        <button type="submit" class="rounded-lg bg-accent px-4 py-2 text-sm text-white font-medium">Filtrar</button>
+    </form>
+
+    <div class="mt-6 rounded-2xl border border-border bg-card overflow-hidden card-soft overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead class="bg-secondary/30 text-left text-muted-foreground">
+                <tr>
+                    <th class="px-6 py-3">Servicio</th>
+                    <th class="px-6 py-3">Categoría</th>
+                    <th class="px-6 py-3">Proveedor</th>
+                    <th class="px-6 py-3">Precio</th>
+                    <th class="px-6 py-3">Estado</th>
+                    <th class="px-6 py-3 text-right">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr class="border-b border-border hover:bg-secondary/20 transition">
+                        <td class="px-6 py-3 font-medium text-primary">@s.Nombre</td>
+                        <td class="px-6 py-3 text-muted-foreground">@s.IdCategoriaNavigation?.Nombre</td>
+                        <td class="px-6 py-3 text-muted-foreground">@s.IdProveedorNavigation?.NombreComercial</td>
+                        <td class="px-6 py-3 font-bold text-accent">$ @s.PrecioBase.ToString("N0")</td>
+                        <td class="px-6 py-3">
+                            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs">@s.Disponibilidad</span>
+                        </td>
+                        <td class="px-6 py-3 text-right">
+                            <form asp-controller="Admin" asp-action="EliminarServicio" method="post"
+                                  onsubmit="return confirm('¿Eliminar este servicio?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@s.IdServicio" />
+                                <button type="submit" class="rounded-lg border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 transition">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

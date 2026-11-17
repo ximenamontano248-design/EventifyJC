@@ -45,7 +45,7 @@ public class ProveedorViewModel
     // Servicios
     [Required(ErrorMessage = "Selecciona al menos una categoría")]
     [Display(Name = "Categorías")]
-    public string Categorias { get; set; } = null!; // CSV, construido por JS desde los botones
+    public string Categorias { get; set; } = null!;
 
     [Display(Name = "Descripción detallada")]
     public string? Descripcion { get; set; }
@@ -84,4 +84,7 @@ public class ProveedorViewModel
 
     [Display(Name = "Autorización de datos")]
     public bool AceptaTratamientoDatos { get; set; }
+
+    public List<Categorium> CategoriasDisponibles { get; set; } = new();
+    public List<string> CiudadesDisponibles { get; set; } = new();
 }

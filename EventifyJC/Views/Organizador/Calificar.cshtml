@@ -1,0 +1,103 @@
+﻿@model CalificacionViewModel
+@{
+    ViewData["Title"] = (ViewBag.EsEdicion == true ? "Editar calificación" : "Calificar servicio") + " · Eventify JC";
+    var esEdicion = ViewBag.EsEdicion == true;
+}
+
+<div class="max-w-xl mx-auto px-4 sm:px-6 py-10">
+
+    <a href="/Organizador/MisReservas" class="inline-flex items-center text-sm text-accent hover:underline mb-4">
+        <i class="fa-solid fa-arrow-left mr-2"></i> Volver a mis reservas
+    </a>
+
+    <div class="rounded-2xl border border-border bg-card p-8 card-soft">
+
+        <div class="text-center mb-6">
+            <div class="inline-flex h-16 w-16 rounded-2xl bg-yellow-100 items-center justify-center mb-3">
+                <i class="fa-solid fa-star text-yellow-500 text-2xl"></i>
+            </div>
+            <h1 class="font-display text-2xl font-bold text-primary">
+                @(esEdicion ? "Editar calificación" : "Calificar servicio")
+            </h1>
+            <p class="mt-1 text-sm text-muted-foreground">
+                @(esEdicion ? "Actualiza tu opinión sobre este servicio." : "Tu opinión ayuda a otros organizadores.")
+            </p>
+        </div>
+
+        <div class="rounded-xl bg-secondary/20 p-4 mb-6">
+            <p class="text-xs uppercase tracking-wider text-muted-foreground">Servicio</p>
+            <p class="font-semibold text-primary">@Model.ServicioNombre</p>
+            <p class="text-sm text-muted-foreground">@Model.ProveedorNombre</p>
+            <p class="text-xs text-muted-foreground mt-1">
+                <i class="fa-solid fa-calendar mr-1"></i>
+                Evento: @Model.FechaEvento.ToString("dd/MM/yyyy")
+            </p>
+        </div>
+
+        <div asp-validation-summary="All" class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700"></div>
+
+        <form asp-controller="Organizador" asp-action="Calificar" method="post" class="space-y-6">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="IdReserva" />
+            <input type="hidden" asp-for="ServicioNombre" />
+            <input type="hidden" asp-for="ProveedorNombre" />
+            <input type="hidden" asp-for="FechaEvento" />
+
+            <div>
+                <label class="block text-sm font-medium text-primary mb-3 text-center">
+                    ¿Cómo calificarías este servicio?
+                </label>
+
+                <div class="flex justify-center gap-2 mb-2">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <label class="cursor-pointer group">
+                            <input type="radio" asp-for="Puntuacion" value="@i" class="sr-only peer" required />
+                            <i class="fa-solid fa-star text-5xl text-gray-300 peer-checked:text-yellow-400 hover:text-yellow-300 transition"
+                               data-valor="@i"></i>
+                        </label>
+                    }
+                </div>
+
+                <p id="textoPuntuacion" class="text-center text-sm font-medium text-muted-foreground">
+                    @(Model.Puntuacion > 0 ? "Puntuación actual: " + Model.Puntuacion + " estrellas" : "Selecciona una puntuación")
+                </p>
+                <span asp-validation-for="Puntuacion" class="block text-center text-xs text-red-600 mt-1"></span>
+            </div>
+
+            <div>
+                <label asp-for="Comentario" class="block text-sm font-medium text-primary"></label>
+                <textarea asp-for="Comentario" rows="4" maxlength="500"
+                          placeholder="Cuéntanos cómo fue tu experiencia..."
+                          class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"></textarea>
+                <span asp-validation-for="Comentario" class="text-xs text-red-600"></span>
+            </div>
+
+            <button type="submit"
+                    class="w-full rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white hover:bg-accent/90 transition">
+                <i class="fa-solid fa-@(esEdicion ? "save" : "paper-plane") mr-2"></i>
+                @(esEdicion ? "Actualizar calificación" : "Enviar calificación")
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const textos = {
+            1: "😞 Muy malo",
+            2: "😐 Malo",
+            3: "🙂 Aceptable",
+            4: "😊 Bueno",
+            5: "🤩 Excelente"
+        };
+
+        document.querySelectorAll('input[name="Puntuacion"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                document.getElementById('textoPuntuacion').textContent = textos[this.value] || '';
+            });
+        });
+    </script>
+}

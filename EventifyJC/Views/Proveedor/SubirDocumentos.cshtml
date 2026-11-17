@@ -1,0 +1,196 @@
+﻿@model Proveedor
+@{
+    ViewData["Title"] = "Verificación · Eventify JC";
+    var estado = Model.EstadoVerificacion;
+}
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <a href="/Proveedor" class="inline-flex items-center text-sm text-accent hover:underline mb-4">
+        <i class="fa-solid fa-arrow-left mr-2"></i> Volver a mi negocio
+    </a>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="mb-4 rounded-lg bg-green-50 p-4 text-sm text-green-800 border border-green-200">
+            <i class="fa-solid fa-check-circle mr-1"></i> @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800 border border-red-200">
+            <i class="fa-solid fa-exclamation-circle mr-1"></i> @TempData["Error"]
+        </div>
+    }
+
+    <!-- Estado de verificación -->
+    <div class="rounded-2xl border border-border bg-card p-6 card-soft mb-6">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <h1 class="font-display text-2xl font-bold text-primary">Verificación de identidad</h1>
+                <p class="mt-1 text-sm text-muted-foreground">
+                    Sube tus documentos para que un administrador verifique tu empresa.
+                </p>
+            </div>
+            <div>
+                @if (estado == "verificado")
+                {
+                    <span class="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+                        <i class="fa-solid fa-check-circle"></i> Verificado
+                    </span>
+                }
+                else if (estado == "en_revision")
+                {
+                    <span class="inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+                        <i class="fa-solid fa-clock"></i> En revisión
+                    </span>
+                }
+                else if (estado == "rechazado")
+                {
+                    <span class="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-800">
+                        <i class="fa-solid fa-times-circle"></i> Rechazado
+                    </span>
+                }
+                else
+                {
+                    <span class="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-800">
+                        <i class="fa-solid fa-exclamation-triangle"></i> No verificado
+                    </span>
+                }
+            </div>
+        </div>
+
+        @if (estado == "rechazado" && !string.IsNullOrEmpty(Model.MotivoRechazo))
+        {
+            <div class="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-800 border border-red-200">
+                <strong>Motivo del rechazo:</strong> @Model.MotivoRechazo
+            </div>
+        }
+
+        @if (estado != "verificado")
+        {
+            <div class="mt-4 rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800 border border-yellow-200">
+                <i class="fa-solid fa-info-circle mr-1"></i>
+                <strong>Importante:</strong> Debes estar verificado para poder publicar servicios.
+            </div>
+        }
+    </div>
+
+    <!-- Formulario de subida -->
+    @if (estado != "verificado")
+    {
+        <div class="rounded-2xl border border-border bg-card p-6 card-soft mb-6">
+            <h2 class="font-display text-lg font-bold text-primary mb-4">
+                <i class="fa-solid fa-upload mr-2"></i>Subir nuevo documento
+            </h2>
+
+            <form asp-controller="Proveedor" asp-action="SubirDocumento" method="post" enctype="multipart/form-data" class="space-y-4">
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <div>
+                        <label class="block text-sm font-medium text-primary mb-1">Tipo de documento</label>
+                        <select name="Tipo" required class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+                            <option value="rut">RUT</option>
+                            <option value="camara_comercio">Cámara de Comercio</option>
+                            <option value="cedula">Cédula del representante</option>
+                            <option value="certificado_bancario">Certificado bancario</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-primary mb-1">Archivo (PDF, JPG, PNG)</label>
+                        <input type="file" name="Archivo" required accept=".pdf,.jpg,.jpeg,.png"
+                               class="w-full text-sm" />
+                        <p class="mt-1 text-xs text-muted-foreground">Máx 5MB</p>
+                    </div>
+                </div>
+
+                <button type="submit" class="rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-white hover:bg-accent/90 transition">
+                    <i class="fa-solid fa-cloud-upload-alt mr-1"></i> Subir documento
+                </button>
+            </form>
+        </div>
+    }
+
+    <!-- Lista de documentos -->
+    <div class="rounded-2xl border border-border bg-card overflow-hidden card-soft">
+        <div class="border-b border-border bg-secondary/30 px-6 py-4">
+            <h2 class="font-display text-base font-bold text-primary">
+                Documentos subidos (@Model.DocumentosVerificacion.Count)
+            </h2>
+        </div>
+
+        @if (!Model.DocumentosVerificacion.Any())
+        {
+            <div class="p-8 text-center text-sm text-muted-foreground">
+                <i class="fa-solid fa-folder-open text-3xl mb-2 opacity-50"></i>
+                <p>Aún no has subido ningún documento.</p>
+            </div>
+        }
+        else
+        {
+            <ul class="divide-y divide-border">
+                @foreach (var doc in Model.DocumentosVerificacion.OrderByDescending(d => d.FechaSubida))
+                {
+                    var badge = doc.Estado switch
+                    {
+                        "aprobado"  => "bg-green-100 text-green-800",
+                        "rechazado" => "bg-red-100 text-red-800",
+                        _           => "bg-blue-100 text-blue-800"
+                    };
+                    var badgeText = doc.Estado switch
+                    {
+                        "aprobado"  => "Aprobado",
+                        "rechazado" => "Rechazado",
+                        _           => "Pendiente"
+                    };
+                    var iconoTipo = doc.Tipo switch
+                    {
+                        "rut" => "fa-file-invoice",
+                        "camara_comercio" => "fa-file-contract",
+                        "cedula" => "fa-id-card",
+                        "certificado_bancario" => "fa-money-check",
+                        _ => "fa-file"
+                    };
+
+                    <li class="px-6 py-4 flex flex-wrap items-center gap-4">
+                        <div class="h-12 w-12 rounded-lg bg-accent/10 flex items-center justify-center text-accent shrink-0">
+                            <i class="fa-solid @iconoTipo text-lg"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-medium text-primary truncate">@doc.NombreArchivo</span>
+                                <span class="rounded-full px-2 py-0.5 text-[10px] font-medium @badge">@badgeText</span>
+                            </div>
+                            <p class="text-xs text-muted-foreground mt-1">
+                                Tipo: <strong>@doc.Tipo</strong> ·
+                                Subido: @doc.FechaSubida.ToString("dd/MM/yyyy HH:mm")
+                            </p>
+                            @if (!string.IsNullOrEmpty(doc.Observacion))
+                            {
+                                <p class="mt-1 text-xs text-red-600">
+                                    <strong>Observación:</strong> @doc.Observacion
+                                </p>
+                            }
+                        </div>
+                        <div class="flex gap-2 shrink-0">
+                            <a href="@doc.UrlArchivo" target="_blank"
+                               class="rounded-lg border border-border px-3 py-1.5 text-xs hover:bg-secondary transition">
+                                <i class="fa-solid fa-eye mr-1"></i> Ver
+                            </a>
+                            @if (doc.Estado != "aprobado")
+                            {
+                                <form asp-controller="Proveedor" asp-action="EliminarDocumento" method="post" class="inline"
+                                      onsubmit="return confirm('¿Eliminar este documento?');">
+                                    <input type="hidden" name="id" value="@doc.IdDocumento" />
+                                    <button type="submit" class="rounded-lg border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 transition">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>

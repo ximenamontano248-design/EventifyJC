@@ -1,22 +1,68 @@
-﻿@model Categorium
-
+﻿@model ProveedorViewModel
 @{
-    ViewData["Title"] = "Editar categoría · Eventify JC";
+    ViewData["Title"] = "Registrar mi negocio · Eventify JC";
 }
 
-<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
     <div class="rounded-2xl border border-border bg-card p-8 card-soft">
-        <h1 class="font-display text-2xl font-bold text-primary">Editar categoría</h1>
+        <h1 class="font-display text-2xl font-bold text-primary">Registra tu negocio</h1>
+        <p class="mt-1 text-sm text-muted-foreground">Completa la información para que los organizadores te encuentren.</p>
 
         <div asp-validation-summary="All" class="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700"></div>
 
-        <form asp-controller="Admin" asp-action="EditarCategoria" method="post" class="mt-6 space-y-5">
-            <input type="hidden" asp-for="IdCategoria" />
+        <form asp-controller="Proveedor" asp-action="Create" method="post" enctype="multipart/form-data" class="mt-6 space-y-5" id="formProveedor">
+
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                    <label asp-for="NombreComercial" class="block text-sm font-medium text-primary"></label>
+                    <input asp-for="NombreComercial" class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
+                    <span asp-validation-for="NombreComercial" class="text-xs text-red-600"></span>
+                </div>
+                <div>
+                    <label asp-for="RazonSocial" class="block text-sm font-medium text-primary"></label>
+                    <input asp-for="RazonSocial" class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
+                    <span asp-validation-for="RazonSocial" class="text-xs text-red-600"></span>
+                </div>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                    <label asp-for="Nit" class="block text-sm font-medium text-primary"></label>
+                    <input asp-for="Nit" class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
+                    <span asp-validation-for="Nit" class="text-xs text-red-600"></span>
+                </div>
+                <div>
+                    <label asp-for="Representante" class="block text-sm font-medium text-primary"></label>
+                    <input asp-for="Representante" class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
+                    <span asp-validation-for="Representante" class="text-xs text-red-600"></span>
+                </div>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                    <label asp-for="TelefonoNegocio" class="block text-sm font-medium text-primary"></label>
+                    <input asp-for="TelefonoNegocio" class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
+                    <span asp-validation-for="TelefonoNegocio" class="text-xs text-red-600"></span>
+                </div>
+                <div>
+                    <!-- SELECTOR DE CIUDAD PRINCIPAL -->
+                    <label asp-for="Ciudad" class="block text-sm font-medium text-primary"></label>
+                    <select asp-for="Ciudad" id="selectCiudadPrincipal" 
+                            class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent">
+                        <option value="">Selecciona una ciudad</option>
+                        @foreach (var ciudad in Model.CiudadesDisponibles)
+                        {
+                            <option value="@ciudad">@ciudad</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Ciudad" class="text-xs text-red-600"></span>
+                </div>
+            </div>
 
             <div>
-                <label asp-for="Nombre" class="block text-sm font-medium text-primary"></label>
-                <input asp-for="Nombre" class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
-                <span asp-validation-for="Nombre" class="text-xs text-red-600"></span>
+                <label asp-for="Direccion" class="block text-sm font-medium text-primary"></label>
+                <input asp-for="Direccion" class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
+                <span asp-validation-for="Direccion" class="text-xs text-red-600"></span>
             </div>
 
             <div>
@@ -25,16 +71,107 @@
                 <span asp-validation-for="Descripcion" class="text-xs text-red-600"></span>
             </div>
 
-            <div>
-                <label asp-for="Link" class="block text-sm font-medium text-primary">Icono (opcional)</label>
-                <input asp-for="Link" placeholder="fa-utensils" class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
-                <span asp-validation-for="Link" class="text-xs text-red-600"></span>
-                <p class="mt-1 text-xs text-muted-foreground">Clase de FontAwesome, ej: fa-utensils, fa-camera, etc.</p>
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                    <!-- CATEGORÍAS CON CHECKBOXES -->
+                    <label class="block text-sm font-medium text-primary mb-2">Categorías</label>
+                    <div class="rounded-lg border border-border max-h-48 overflow-y-auto p-3 space-y-2">
+                        @foreach (var cat in Model.CategoriasDisponibles)
+                        {
+                            <label class="flex items-center gap-2 cursor-pointer text-sm">
+                                <input type="checkbox" class="chk-categoria rounded border-border text-accent focus:ring-accent" value="@cat.Nombre" />
+                                @cat.Nombre
+                            </label>
+                        }
+                    </div>
+                    <input type="hidden" asp-for="Categorias" id="inputCategorias" />
+                    <span asp-validation-for="Categorias" class="text-xs text-red-600"></span>
+                </div>
+                <div>
+                    <label asp-for="Tarifas" class="block text-sm font-medium text-primary"></label>
+                    <input asp-for="Tarifas" placeholder="Desde $100.000" class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
+                    <span asp-validation-for="Tarifas" class="text-xs text-red-600"></span>
+                </div>
             </div>
 
-            <button type="submit" class="flex w-full items-center justify-center rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground hover:bg-accent/90 transition">
-                <i class="fa-solid fa-save mr-2"></i> Actualizar categoría
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                    <label asp-for="NivelCobertura" class="block text-sm font-medium text-primary"></label>
+                    <select asp-for="NivelCobertura" class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent">
+                        <option value="municipal">Municipal</option>
+                        <option value="regional">Regional</option>
+                        <option value="nacional">Nacional</option>
+                    </select>
+                    <span asp-validation-for="NivelCobertura" class="text-xs text-red-600"></span>
+                </div>
+                <div>
+                    <!-- CIUDADES CUBIERTAS CON CHECKBOXES -->
+                    <label class="block text-sm font-medium text-primary mb-2">Ciudades cubiertas</label>
+                    <div class="rounded-lg border border-border max-h-48 overflow-y-auto p-3 space-y-2">
+                        @foreach (var ciudad in Model.CiudadesDisponibles)
+                        {
+                            <label class="flex items-center gap-2 cursor-pointer text-sm">
+                                <input type="checkbox" class="chk-ciudad rounded border-border text-accent focus:ring-accent" value="@ciudad" />
+                                @ciudad
+                            </label>
+                        }
+                    </div>
+                    <input type="hidden" asp-for="CiudadesCubiertas" id="inputCiudadesCubiertas" />
+                    <span asp-validation-for="CiudadesCubiertas" class="text-xs text-red-600"></span>
+                </div>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-3">
+                <div>
+                    <label asp-for="Whatsapp" class="block text-sm font-medium text-primary"></label>
+                    <input asp-for="Whatsapp" class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
+                </div>
+                <div>
+                    <label asp-for="Instagram" class="block text-sm font-medium text-primary"></label>
+                    <input asp-for="Instagram" class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
+                </div>
+                <div>
+                    <label asp-for="SitioWeb" class="block text-sm font-medium text-primary"></label>
+                    <input asp-for="SitioWeb" class="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
+                </div>
+            </div>
+
+            <div>
+                <label asp-for="Logo" class="block text-sm font-medium text-primary"></label>
+                <input type="file" asp-for="Logo" accept="image/*" class="mt-1 w-full text-sm" />
+                <span asp-validation-for="Logo" class="text-xs text-red-600"></span>
+                <p class="mt-1 text-xs text-muted-foreground">Formatos: JPG, PNG o WEBP. Máx 3MB.</p>
+            </div>
+
+            <div class="flex items-start gap-3">
+                <input type="checkbox" asp-for="AceptaTratamientoDatos" class="mt-1 h-4 w-4 rounded border-border text-accent focus:ring-accent" />
+                <label asp-for="AceptaTratamientoDatos" class="text-sm text-muted-foreground">
+                    Acepto el <a asp-controller="Home" asp-action="Privacidad" target="_blank" class="text-accent hover:underline">tratamiento de mis datos personales</a> según la Ley 1581 de 2012.
+                </label>
+            </div>
+            <span asp-validation-for="AceptaTratamientoDatos" class="text-xs text-red-600"></span>
+
+            <button type="submit" class="flex w-full items-center justify-center rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent/90 transition">
+                <i class="fa-solid fa-store mr-2"></i> Registrar negocio
             </button>
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.getElementById('formProveedor').addEventListener('submit', function () {
+            const categoriasSeleccionadas = Array.from(
+                document.querySelectorAll('.chk-categoria:checked')
+            ).map(chk => chk.value);
+            document.getElementById('inputCategorias').value = categoriasSeleccionadas.join(', ');
+
+            const ciudadesSeleccionadas = Array.from(
+                document.querySelectorAll('.chk-ciudad:checked')
+            ).map(chk => chk.value);
+            document.getElementById('inputCiudadesCubiertas').value = ciudadesSeleccionadas.join(', ');
+        });
+    </script>
+}

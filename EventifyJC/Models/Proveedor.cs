@@ -37,4 +37,16 @@ public partial class Proveedor
     public virtual ICollection<Cotizacion> Cotizacions { get; set; } = new List<Cotizacion>();
     public virtual Usuario IdUsuarioNavigation { get; set; } = null!;
     public virtual ICollection<Servicio> Servicios { get; set; } = new List<Servicio>();
+
+    // =========================================================
+    // Verificación
+    // =========================================================
+    public string EstadoVerificacion { get; set; } = "no_verificado";
+    public string? MotivoRechazo { get; set; }
+    public DateTime? FechaSolicitudVerificacion { get; set; }
+    public DateTime? FechaVerificacion { get; set; }
+    public int? VerificadoPor { get; set; }
+
+    public virtual Usuario? VerificadoPorNavigation { get; set; }
+    public virtual ICollection<DocumentoVerificacion> DocumentosVerificacion { get; set; } = new List<DocumentoVerificacion>();
 }

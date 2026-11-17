@@ -1,0 +1,104 @@
+@model List<EventifyJC.Models.Categorium>
+@{
+    ViewData["Title"] = "Categorías · Admin";
+}
+
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+            <a href="/Admin" class="text-sm text-accent hover:underline">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Volver al panel
+            </a>
+            <h1 class="mt-2 font-display text-3xl font-extrabold text-primary">Categorías</h1>
+            <p class="mt-1 text-sm text-muted-foreground">
+                @Model.Count categoría@(Model.Count == 1 ? "" : "s")
+            </p>
+        </div>
+
+        <a asp-action="CrearCategoria"
+           class="inline-flex items-center rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent/90 transition">
+            <i class="fa-solid fa-plus mr-2"></i> Nueva categoría
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-2 text-sm text-green-800">
+            <i class="fa-solid fa-check-circle mr-1"></i> @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-800">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i> @TempData["Error"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="mt-8 rounded-2xl border border-dashed border-border bg-card p-12 text-center">
+            <i class="fa-solid fa-tags text-4xl text-muted-foreground"></i>
+            <p class="mt-3 text-muted-foreground">Aún no hay categorías creadas.</p>
+        </div>
+    }
+    else
+    {
+        <div class="mt-6 overflow-x-auto rounded-2xl border border-border bg-white card-soft">
+            <table class="min-w-full text-sm">
+                <thead class="bg-secondary/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
+                    <tr>
+                        <th class="px-4 py-3">Nombre</th>
+                        <th class="px-4 py-3">Descripción</th>
+                        <th class="px-4 py-3">Link</th>
+                        <th class="px-4 py-3 text-center">Servicios</th>
+                        <th class="px-4 py-3 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                    @foreach (var c in Model)
+                    {
+                        <tr class="hover:bg-secondary/20">
+                            <td class="px-4 py-3 font-medium text-primary">@c.Nombre</td>
+                            <td class="px-4 py-3 text-muted-foreground max-w-xs truncate">@(c.Descripcion ?? "—")</td>
+                            <td class="px-4 py-3">
+                                @if (!string.IsNullOrWhiteSpace(c.Link))
+                                {
+                                    <a href="@c.Link" target="_blank" rel="noopener" class="text-accent hover:underline">
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted-foreground">—</span>
+                                }
+                            </td>
+                            <td class="px-4 py-3 text-center">
+                                <span class="rounded-full bg-secondary/60 px-2.5 py-0.5 text-xs font-medium">
+                                    @c.Servicios.Count
+                                </span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="flex items-center justify-end gap-2">
+                                    <a asp-action="EditarCategoria" asp-route-id="@c.IdCategoria"
+                                       class="rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-secondary transition">
+                                        <i class="fa-solid fa-pen mr-1"></i> Editar
+                                    </a>
+
+                                    <form asp-action="EliminarCategoria" asp-route-id="@c.IdCategoria" method="post"
+                                          onsubmit="return confirm('¿Eliminar la categoría @c.Nombre?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit"
+                                                class="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 transition">
+                                            <i class="fa-solid fa-trash mr-1"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

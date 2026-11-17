@@ -26,4 +26,15 @@ public partial class Servicio
     public virtual Categorium IdCategoriaNavigation { get; set; } = null!;
 
     public virtual Proveedor IdProveedorNavigation { get; set; } = null!;
+    // =========================================================
+    // Tipo y cantidades (Producto vs Servicio)
+    // =========================================================
+    public string Tipo { get; set; } = "servicio";
+    public int? CantidadMinima { get; set; }
+    public int? CantidadMaxima { get; set; }
+    public int? CantidadIncremento { get; set; }
+    public int? CapacidadSimultanea { get; set; }
+
+    public virtual ICollection<MatrizPrecio> MatrizPrecios { get; set; } = new List<MatrizPrecio>();
+    public virtual ICollection<Disponibilidad> Disponibilidades { get; set; } = new List<Disponibilidad>();
 }

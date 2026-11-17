@@ -1,0 +1,55 @@
+﻿@model List<Auditorium>
+@{
+    ViewData["Title"] = "Auditoría · Admin";
+}
+
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <h1 class="font-display text-3xl font-extrabold text-primary">Registro de auditoría</h1>
+    <p class="mt-1 text-muted-foreground">Últimos 500 cambios registrados en el sistema.</p>
+
+    <form method="get" class="mt-6 flex flex-wrap gap-3">
+        <select name="tabla" class="rounded-lg border border-border px-3 py-2 text-sm">
+            <option value="">Todas las tablas</option>
+            @foreach (var t in (List<string>)ViewBag.Tablas)
+            {
+                <option value="@t" selected="@(ViewBag.Tabla == t)">@t</option>
+            }
+        </select>
+        <button type="submit" class="rounded-lg bg-accent px-4 py-2 text-sm text-white font-medium">Filtrar</button>
+    </form>
+
+    <div class="mt-6 rounded-2xl border border-border bg-card overflow-hidden card-soft overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead class="bg-secondary/30 text-left text-muted-foreground">
+                <tr>
+                    <th class="px-6 py-3">Fecha</th>
+                    <th class="px-6 py-3">Tabla</th>
+                    <th class="px-6 py-3">Operación</th>
+                    <th class="px-6 py-3">ID Registro</th>
+                    <th class="px-6 py-3">Usuario</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model)
+                {
+                    var color = a.Operacion switch
+                    {
+                        "INSERT" => "bg-green-100 text-green-800",
+                        "UPDATE" => "bg-yellow-100 text-yellow-800",
+                        "DELETE" => "bg-red-100 text-red-800",
+                        _ => "bg-slate-100 text-slate-800"
+                    };
+                    <tr class="border-b border-border hover:bg-secondary/20 transition">
+                        <td class="px-6 py-3 text-muted-foreground">@a.FechaHora?.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td class="px-6 py-3 font-medium">@a.Tabla</td>
+                        <td class="px-6 py-3">
+                            <span class="rounded-full px-2.5 py-1 text-xs @color">@a.Operacion</span>
+                        </td>
+                        <td class="px-6 py-3 text-muted-foreground">@a.IdRegistro</td>
+                        <td class="px-6 py-3 text-muted-foreground">@a.UsuarioAccionNavigation?.Nombre</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
